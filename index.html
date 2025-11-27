@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HipON Complaint & Vigilance Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --card-bg: #ffffff;
+      --primary: #1759c5;
+      --primary-soft: #e2ecff;
+      --border: #d5d9e2;
+      --text-main: #1f2933;
+      --text-muted: #6b7280;
+      --danger: #b00020;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius-lg: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #eef2ff 0, #f5f7fa 45%, #f9fafb 100%);
+      color: var(--text-main);
+    }
+
+    header {
+      padding: 16px 5vw 8px;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #9333ea);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+    }
+
+    .logo-text-main {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .logo-text-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.09);
+      color: #166534;
+      font-size: 0.75rem;
+      border: 1px solid rgba(22, 163, 74, 0.3);
+    }
+
+    main {
+      padding: 0 5vw 32px;
+    }
+
+    .layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 20px;
+      border: 1px solid rgba(148, 163, 184, 0.36);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 500;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.85rem;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    .helper {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select,
+    textarea {
+      padding: 7px 9px;
+      border-radius: 9px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      font: inherit;
+      background: #f9fafb;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease,
+        background 0.15s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      background: white;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    input[type="file"] {
+      font-size: 0.8rem;
+    }
+
+    .required {
+      color: #dc2626;
+      margin-left: 2px;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border-radius: 999px;
+      padding: 7px 14px;
+      border: none;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.45);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      color: var(--text-main);
+      padding-inline: 11px;
+    }
+
+    .btn-ghost:hover {
+      background: #f3f4f6;
+    }
+
+    .danger-text {
+      color: var(--danger);
+      font-size: 0.78rem;
+      margin-top: 6px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .chip {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      background: #eef2ff;
+      color: #4338ca;
+    }
+
+    .section-spacer {
+      height: 10px;
+    }
+
+    /* Chatbot */
+
+    .chat-window {
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      height: 230px;
+      overflow: hidden;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 8px 9px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+    }
+
+    .chat-input-row {
+      display: flex;
+      border-top: 1px solid #e5e7eb;
+      padding: 6px;
+      gap: 6px;
+      background: #f3f4f6;
+    }
+
+    .chat-input-row input {
+      flex: 1;
+      font-size: 0.8rem;
+      padding: 6px 8px;
+      border-radius: 999px;
+    }
+
+    .chat-bubble {
+      max-width: 90%;
+      margin-bottom: 6px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      line-height: 1.3;
+    }
+
+    .chat-bubble.user {
+      margin-left: auto;
+      background: #e0f2fe;
+    }
+
+    .chat-bubble.bot {
+      margin-right: auto;
+      background: white;
+      border: 1px solid #e5e7eb;
+    }
+
+    /* Complaints table */
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 6px 5px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-pill {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      display: inline-block;
+    }
+
+    .status-pill.In\ review {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-pill.Closed {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-pill.Awaiting\ info {
+      background: #e0f2fe;
+      color: #075985;
+    }
+
+    .kpi-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .kpi-pill {
+      flex: 1;
+      min-width: 90px;
+      padding: 5px 8px;
+      border-radius: 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      font-size: 0.75rem;
+    }
+
+    .kpi-label {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      margin-bottom: 2px;
+    }
+
+    .kpi-value {
+      font-weight: 600;
+    }
+
+    #report-output {
+      width: 100%;
+      min-height: 100px;
+      font-size: 0.78rem;
+      padding: 8px 9px;
+      border-radius: 9px;
+      border: 1px solid #d1d5db;
+      resize: vertical;
+    }
+
+    .tiny {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    a.inline-link {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 0.8rem;
+    }
+
+    a.inline-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-mark">H</div>
+        <div>
+          <div class="logo-text-main">HipON Vigilance Hub</div>
+          <div class="logo-text-sub">
+            Prototype complaint portal for CERAMO &amp; POLYMO hip systems (demo only)
+          </div>
+        </div>
+      </div>
+      <div class="badge">Post-market surveillance · MDR-aligned (concept)</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="layout">
+      <!-- LEFT: FORM -->
+      <section class="card" id="form-section">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Submit a new complaint</div>
+            <div class="card-subtitle">
+              For healthcare professionals reporting HipON CERAMO / POLYMO events.
+              No patient identifiers (PHI) please.
+            </div>
+          </div>
+          <span class="pill">Step 1 · Data entry</span>
+        </div>
+
+        <form id="complaint-form">
+          <div class="form-grid">
+            <!-- HCP details -->
+            <div class="form-group">
+              <label for="hcpName">Your name <span class="required">*</span></label>
+              <input id="hcpName" name="hcpName" required />
+            </div>
+
+            <div class="form-group">
+              <label for="role">Role <span class="required">*</span></label>
+              <select id="role" name="role" required>
+                <option value="">Select role</option>
+                <option>Orthopedic Surgeon</option>
+                <option>OR Nurse</option>
+                <option>Scrub Nurse</option>
+                <option>Physiotherapist</option>
+                <option>Radiologist</option>
+                <option>Other HCP</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="facility">Hospital / facility <span class="required">*</span></label>
+              <input id="facility" name="facility" required />
+            </div>
+
+            <div class="form-group">
+              <label for="country">Country (EU/EEA) <span class="required">*</span></label>
+              <select id="country" name="country" required>
+                <option value="">Select</option>
+                <option>France</option>
+                <option>Germany</option>
+                <option>Italy</option>
+                <option>Spain</option>
+                <option>Sweden</option>
+                <option>Netherlands</option>
+                <option>Belgium</option>
+                <option>Austria</option>
+                <option>Other EU/EEA</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="city">City</label>
+              <input id="city" name="city" />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email <span class="required">*</span></label>
+              <input id="email" name="email" type="email" required />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" />
+            </div>
+
+            <!-- Device selection -->
+            <div class="form-group">
+              <label for="deviceSystem">Device system <span class="required">*</span></label>
+              <select id="deviceSystem" name="deviceSystem" required>
+                <option value="">Select device</option>
+                <option value="CERAMO">CERAMO (ceramic-on-ceramic)</option>
+                <option value="POLYMO">POLYMO (metal-on-polyethylene)</option>
+              </select>
+              <div class="helper">
+                Same femoral stem design for both systems.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="stemSize">Stem size</label>
+              <select id="stemSize" name="stemSize">
+                <option value="">Select</option>
+                <option>#1</option>
+                <option>#2</option>
+                <option>#3</option>
+                <option>#4</option>
+                <option>#5</option>
+                <option>#6</option>
+                <option>#7</option>
+                <option>#8</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="cupSize">Cup size</label>
+              <select id="cupSize" name="cupSize">
+                <option value="">Select</option>
+                <option>44 mm</option>
+                <option>46 mm</option>
+                <option>48 mm</option>
+                <option>50 mm</option>
+                <option>52 mm</option>
+                <option>54 mm</option>
+                <option>56 mm</option>
+                <option>58 mm</option>
+                <option>60 mm</option>
+                <option>62 mm</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="headSize">Head size</label>
+              <select id="headSize" name="headSize">
+                <option value="">Select</option>
+                <option>28 mm</option>
+                <option>32 mm</option>
+                <option>36 mm</option>
+                <option>40 mm</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="offsetOption">Offset option</label>
+              <select id="offsetOption" name="offsetOption">
+                <option value="">Select</option>
+                <option>Normal</option>
+                <option>High</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="neckLength">Neck length</label>
+              <select id="neckLength" name="neckLength">
+                <option value="">Select</option>
+                <option>S</option>
+                <option>M</option>
+                <option>L</option>
+              </select>
+            </div>
+
+            <!-- Identification -->
+            <div class="form-group">
+              <label for="lotNumber">Lot / batch</label>
+              <input id="lotNumber" name="lotNumber" />
+            </div>
+
+            <div class="form-group">
+              <label for="serialNumber">Serial number</label>
+              <input id="serialNumber" name="serialNumber" />
+            </div>
+
+            <div class="form-group full">
+              <label for="udi">
+                UDI (Unique Device Identifier)
+              </label>
+              <input id="udi" name="udi" />
+              <div class="helper">
+                From the device label. Example pattern:
+                <code>(01)0761234XXXXXX(17)260101(10)LOTXXXX</code>
+              </div>
+            </div>
+
+            <!-- Event -->
+            <div class="form-group">
+              <label for="eventDate">Event / observation date</label>
+              <input id="eventDate" name="eventDate" type="date" />
+            </div>
+
+            <div class="form-group">
+              <label for="submittedAt">Submission date</label>
+              <input id="submittedAt" name="submittedAt" type="date" />
+            </div>
+
+            <div class="form-group full">
+              <label for="narrative">
+                Complaint narrative <span class="required">*</span>
+              </label>
+              <textarea
+                id="narrative"
+                name="narrative"
+                placeholder="Describe what happened (symptoms, intraoperative findings, imaging, outcome, actions taken)..."
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-group full">
+              <label for="attachments">Attachments</label>
+              <input
+                id="attachments"
+                name="attachments"
+                type="file"
+                multiple
+                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+              />
+              <div class="helper">
+                Photos, label / UDI images, operative note excerpts.
+                (In this demo, files are not actually uploaded to a server.)
+              </div>
+            </div>
+          </div>
+
+          <div class="danger-text">
+            If the event involves patient death or immediately life-threatening
+            harm, please also contact your local HipON vigilance hotline
+            by phone according to your national procedure.
+          </div>
+
+          <div class="button-row">
+            <button type="submit" class="btn-primary">
+              Submit complaint (demo)
+            </button>
+            <button type="button" id="reset-form" class="btn-secondary">
+              Reset form
+            </button>
+            <button type="button" id="contact-team" class="btn-ghost">
+              Direct contact (email)
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- RIGHT: CHATBOT, REPORT, TABLE -->
+      <section style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Chatbot -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Submission assistant (simulated chatbot)</div>
+              <div class="card-subtitle">
+                Ask how to find UDI, what information is needed, etc.
+              </div>
+            </div>
+            <span class="pill">Step 0 · Guidance</span>
+          </div>
+
+          <div class="chat-window">
+            <div id="chat-messages" class="chat-messages"></div>
+            <div class="chat-input-row">
+              <input
+                id="chat-input"
+                placeholder="Ask a question about the form..."
+              />
+              <button type="button" id="chat-send" class="btn-primary" style="padding-inline: 10px;">
+                Send
+              </button>
+            </div>
+          </div>
+          <div class="tiny">
+            This is a rule-based prototype. In a real deployment, this widget
+            would be backed by an AI model and MDR/IFU guidance documents.
+          </div>
+        </div>
+
+        <!-- Report generator -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Generate Julius AI prompt</div>
+              <div class="card-subtitle">
+                Pick a case and auto-generate a structured prompt for Julius or another LLM.
+              </div>
+            </div>
+            <span class="pill">Step 2 · Text report</span>
+          </div>
+          <div class="form-group">
+            <label for="report-case-select">Select complaint</label>
+            <select id="report-case-select">
+              <option value="">Choose a case from the database</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="report-output">Prompt to copy into Julius AI</label>
+            <textarea
+              id="report-output"
+              placeholder="Select a complaint above to generate an AI prompt."
+            ></textarea>
+          </div>
+          <div class="button-row">
+            <button type="button" id="copy-report" class="btn-secondary">
+              Copy prompt to clipboard
+            </button>
+            <button type="button" id="preview-summary" class="btn-ghost">
+              Show simple human-readable summary
+            </button>
+          </div>
+          <div class="tiny">
+            Workflow for demo: select a case → click “Copy prompt” →
+            paste into Julius AI → show the generated vigilance narrative.
+          </div>
+        </div>
+
+        <!-- Recent complaints / Excel export -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Complaints overview (fake DB)</div>
+              <div class="card-subtitle">
+                50 simulated historical complaints + any new demo submissions.
+              </div>
+            </div>
+            <span class="pill">Step 3 · Excel & alerts (concept)</span>
+          </div>
+
+          <div class="kpi-row">
+            <div class="kpi-pill">
+              <div class="kpi-label">Total complaints (DB)</div>
+              <div class="kpi-value" id="kpi-total">–</div>
+            </div>
+            <div class="kpi-pill">
+              <div class="kpi-label">New submissions (this session)</div>
+              <div class="kpi-value" id="kpi-new">0</div>
+            </div>
+            <div class="kpi-pill">
+              <div class="kpi-label">CERAMO / POLYMO split</div>
+              <div class="kpi-value" id="kpi-split">–</div>
+            </div>
+          </div>
+
+          <div class="button-row" style="margin-bottom: 8px;">
+            <button type="button" id="download-csv" class="btn-secondary">
+              Download combined CSV (Excel)
+            </button>
+            <a class="inline-link" href="hipon_fake_complaints.csv" target="_blank">
+              Open original CSV
+            </a>
+          </div>
+
+          <div class="form-group">
+            <label>Recent complaints (last 8 in DB)</label>
+            <div style="max-height: 200px; overflow: auto; border-radius: 10px; border: 1px solid #e5e7eb;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Case</th>
+                    <th>Device</th>
+                    <th>Sizes</th>
+                    <th>Country</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="complaints-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="tiny">
+            In a real environment, this table would be connected to Excel / Power BI
+            and trigger email / Teams alerts to at least 4 vigilance team members.
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // -------------------------------
+    // GLOBAL STATE
+    // -------------------------------
+    let baseComplaints = [];
+    let newComplaints = [];
+
+    function getAllComplaints() {
+      return [...baseComplaints, ...newComplaints];
+    }
+
+    // -------------------------------
+    // UTILITIES
+    // -------------------------------
+    function todayISO() {
+      const d = new Date();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return d.getFullYear() + "-" + month + "-" + day;
+    }
+
+    function toCsv(rows) {
+      if (!rows.length) return "";
+      const headers = Object.keys(rows[0]);
+      const escape = (value) => {
+        if (value == null) return "";
+        const s = String(value);
+        if (/[",\n]/.test(s)) {
+          return '"' + s.replace(/"/g, '""') + '"';
+        }
+        return s;
+      };
+      const lines = [];
+      lines.push(headers.join(","));
+      for (const row of rows) {
+        lines.push(headers.map((h) => escape(row[h])).join(","));
+      }
+      return lines.join("\n");
+    }
+
+    function triggerDownload(filename, text) {
+      const blob = new Blob([text], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function showToast(message) {
+      alert(message); // simple for demo; could be improved with a custom toast
+    }
+
+    // -------------------------------
+    // INITIALISATION
+    // -------------------------------
+    async function loadBaseComplaints() {
+      try {
+        const res = await fetch("hipon_fake_complaints.json");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        baseComplaints = Array.isArray(data) ? data : [];
+      } catch (e) {
+        console.warn("Could not load hipon_fake_complaints.json", e);
+        baseComplaints = [];
+      }
+    }
+
+    function prefillDates() {
+      const today = todayISO();
+      const submittedInput = document.getElementById("submittedAt");
+      const eventInput = document.getElementById("eventDate");
+      if (submittedInput && !submittedInput.value) submittedInput.value = today;
+      if (eventInput && !eventInput.value) eventInput.value = today;
+    }
+
+    function setupDirectContactButton() {
+      const btn = document.getElementById("contact-team");
+      if (!btn) return;
+      btn.addEventListener("click", () => {
+        const subject = encodeURIComponent("HipON complaint – urgent follow-up requested");
+        const body = encodeURIComponent(
+          "Dear HipON vigilance team,%0D%0A%0D%0AI would like to discuss a complaint I am submitting via the portal.%0D%0A%0D%0ARegards,%0D%0A"
+        );
+        window.location.href = "mailto:vigilance@hipon-demo.eu?subject=" + subject + "&body=" + body;
+      });
+    }
+
+    // -------------------------------
+    // FORM HANDLING
+    // -------------------------------
+    function formToComplaintObject(formData, caseId) {
+      const attachmentsInput = document.getElementById("attachments");
+      const attachmentNames = [];
+      if (attachmentsInput && attachmentsInput.files) {
+        for (const f of attachmentsInput.files) {
+          attachmentNames.push(f.name);
+        }
+      }
+
+      return {
+        caseId,
+        submittedAt: formData.get("submittedAt") || todayISO(),
+        eventDate: formData.get("eventDate") || "",
+        hcpName: formData.get("hcpName") || "",
+        role: formData.get("role") || "",
+        facility: formData.get("facility") || "",
+        email: formData.get("email") || "",
+        phone: formData.get("phone") || "",
+        country: formData.get("country") || "",
+        city: formData.get("city") || "",
+        deviceSystem: formData.get("deviceSystem") || "",
+        stemSize: formData.get("stemSize") || "",
+        cupSize: formData.get("cupSize") || "",
+        headSize: formData.get("headSize") || "",
+        offsetOption: formData.get("offsetOption") || "",
+        neckLength: formData.get("neckLength") || "",
+        lotNumber: formData.get("lotNumber") || "",
+        serialNumber: formData.get("serialNumber") || "",
+        udi: formData.get("udi") || "",
+        narrative: formData.get("narrative") || "",
+        status: "In review",
+        owner: "Vigilance Manager",
+        attachments: attachmentNames.join("; ")
+      };
+    }
+
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      if (!formData.get("hcpName") || !formData.get("role") || !formData.get("facility") || !formData.get("country") || !formData.get("email") || !formData.get("deviceSystem") || !formData.get("narrative")) {
+        showToast("Please fill all required fields (marked with *).");
+        return;
+      }
+
+      const currentCount = getAllComplaints().length;
+      const nextNumber = currentCount + 1;
+      const caseId = "HIPON-" + String(nextNumber).padStart(4, "0");
+
+      const complaint = formToComplaintObject(formData, caseId);
+      newComplaints.push(complaint);
+
+      renderKpis();
+      renderComplaintsTable();
+      populateReportSelect();
+
+      form.reset();
+      prefillDates();
+      showToast(
+        "Complaint " +
+          caseId +
+          " recorded in the local demo session. In a real system, this would now flow into Excel and alert the team."
+      );
+    }
+
+    function handleResetForm() {
+      const form = document.getElementById("complaint-form");
+      if (!form) return;
+      form.reset();
+      prefillDates();
+    }
+
+    // -------------------------------
+    // TABLE + KPIs
+    // -------------------------------
+    function renderKpis() {
+      const totalEl = document.getElementById("kpi-total");
+      const newEl = document.getElementById("kpi-new");
+      const splitEl = document.getElementById("kpi-split");
+
+      const all = getAllComplaints();
+      const total = all.length;
+      const ceramo = all.filter((c) => c.deviceSystem === "CERAMO").length;
+      const polymo = all.filter((c) => c.deviceSystem === "POLYMO").length;
+
+      if (totalEl) totalEl.textContent = total ? String(total) : "0";
+      if (newEl) newEl.textContent = String(newComplaints.length);
+      if (splitEl) {
+        if (!total) splitEl.textContent = "–";
+        else splitEl.textContent = `CERAMO ${ceramo} · POLYMO ${polymo}`;
+      }
+    }
+
+    function renderComplaintsTable() {
+      const tbody = document.getElementById("complaints-tbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      const all = getAllComplaints();
+      const last = all.slice(-8); // last 8
+      for (const c of last) {
+        const tr = document.createElement("tr");
+
+        const tdCase = document.createElement("td");
+        tdCase.textContent = c.caseId;
+        tr.appendChild(tdCase);
+
+        const tdDevice = document.createElement("td");
+        tdDevice.textContent = c.deviceSystem || "";
+        tr.appendChild(tdDevice);
+
+        const tdSizes = document.createElement("td");
+        tdSizes.textContent =
+          [c.stemSize, c.cupSize, c.headSize].filter(Boolean).join(" / ") || "";
+        tr.appendChild(tdSizes);
+
+        const tdCountry = document.createElement("td");
+        tdCountry.textContent = c.country || "";
+        tr.appendChild(tdCountry);
+
+        const tdStatus = document.createElement("td");
+        const span = document.createElement("span");
+        span.textContent = c.status || "";
+        span.className = "status-pill " + (c.status || "").replace(/\s/g, "\\ ");
+        tdStatus.appendChild(span);
+        tr.appendChild(tdStatus);
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    // -------------------------------
+    // REPORT GENERATOR (JULIUS PROMPT)
+    // -------------------------------
+    function populateReportSelect() {
+      const select = document.getElementById("report-case-select");
+      if (!select) return;
+      const all = getAllComplaints();
+      const selectedValue = select.value;
+
+      select.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Choose a case from the database";
+      select.appendChild(placeholder);
+
+      for (const c of all) {
+        const opt = document.createElement("option");
+        opt.value = c.caseId;
+        opt.textContent =
+          c.caseId +
+          " · " +
+          (c.deviceSystem || "Unknown") +
+          " · " +
+          (c.country || "Country n/a");
+        select.appendChild(opt);
+      }
+
+      if (selectedValue) {
+        select.value = selectedValue;
+      }
+    }
+
+    function getComplaintById(caseId) {
+      return getAllComplaints().find((c) => c.caseId === caseId);
+    }
+
+    function buildJuliusPrompt(complaint) {
+      const jsonSnippet = JSON.stringify(complaint, null, 2);
+      return (
+        "You are a medical device vigilance specialist working with HipON Total Hip Replacement systems.\n" +
+        "Draft a concise but structured post-market surveillance case narrative for internal review under EU MDR.\n\n" +
+        "Requirements:\n" +
+        "- Use neutral, factual language.\n" +
+        "- Include: device system (CERAMO / POLYMO), relevant sizes (stem, cup, head), country, brief clinical course, and any suspected device/technique issues.\n" +
+        "- Close with a short list of next steps for the HipON vigilance team (e.g. need for imaging, lot trend review, contacting reporter).\n\n" +
+        "Here is the structured complaint data from the HipON portal:\n\n" +
+        jsonSnippet +
+        "\n\n" +
+        "Please provide:\n" +
+        "1) A paragraph-style narrative (no patient identifiers), and\n" +
+        "2) A bulleted list of recommended next actions."
+      );
+    }
+
+    function handleReportSelectChange() {
+      const select = document.getElementById("report-case-select");
+      const output = document.getElementById("report-output");
+      if (!select || !output) return;
+      const caseId = select.value;
+      if (!caseId) {
+        output.value = "";
+        return;
+      }
+      const complaint = getComplaintById(caseId);
+      if (!complaint) {
+        output.value = "Selected case not found in current data.";
+        return;
+      }
+      output.value = buildJuliusPrompt(complaint);
+    }
+
+    function handleCopyReport() {
+      const output = document.getElementById("report-output");
+      if (!output || !output.value) {
+        showToast("No prompt to copy. Select a complaint first.");
+        return;
+      }
+      navigator.clipboard
+        .writeText(output.value)
+        .then(() => showToast("Prompt copied to clipboard. Paste into Julius AI in your demo."))
+        .catch(() => showToast("Could not copy to clipboard in this browser."));
+    }
+
+    function handlePreviewSummary() {
+      const select = document.getElementById("report-case-select");
+      if (!select || !select.value) {
+        showToast("Select a complaint to preview.");
+        return;
+      }
+      const complaint = getComplaintById(select.value);
+      if (!complaint) {
+        showToast("Selected case not found.");
+        return;
+      }
+      const summary =
+        "Case " +
+        complaint.caseId +
+        " – " +
+        (complaint.deviceSystem || "device n/a") +
+        " (" +
+        [complaint.stemSize, complaint.cupSize, complaint.headSize].filter(Boolean).join(" / ") +
+        "), reported from " +
+        (complaint.country || "unknown country") +
+        ". Reporter: " +
+        (complaint.hcpName || "HCP") +
+        " (" +
+        (complaint.role || "role n/a") +
+        "). Narrative: " +
+        (complaint.narrative || "no narrative provided");
+      document.getElementById("report-output").value = summary;
+    }
+
+    // -------------------------------
+    // CHATBOT (SIMPLE RULE-BASED)
+    // -------------------------------
+    function addChatMessage(text, sender) {
+      const container = document.getElementById("chat-messages");
+      if (!container) return;
+      const div = document.createElement("div");
+      div.className = "chat-bubble " + sender;
+      div.textContent = text;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function botReply(userText) {
+      const t = userText.toLowerCase();
+      if (t.includes("udi")) {
+        return (
+          "The UDI is printed on the device label or implant sticker. " +
+          "It often starts with codes like (01)…(17)…(10)… . For this demo, you can type any ID string."
+        );
+      }
+      if (t.includes("mandatory") || t.includes("required")) {
+        return "Required fields are marked with a red *. At minimum, we need your role, facility, contact email, device system, and a narrative description.";
+      }
+      if (t.includes("ceramo") || t.includes("polymo") || t.includes("difference")) {
+        return "CERAMO is a ceramic-on-ceramic bearing system. POLYMO is metal-on-polyethylene. Both use the same femoral stem. Please choose the system implanted in your patient.";
+      }
+      if (t.includes("urgent") || t.includes("death") || t.includes("serious")) {
+        return "For serious incidents including death or immediately life-threatening harm, please also contact the local HipON vigilance hotline by phone. This portal alone is not sufficient for urgent escalation.";
+      }
+      if (t.includes("size") || t.includes("stem") || t.includes("cup") || t.includes("head")) {
+        return "Please select the implanted stem size (#1–#8), cup size (44–62 mm), and head size (28/32/36/40 mm) if known. If you are unsure, you may leave some of these fields blank but include as much detail as possible in the narrative.";
+      }
+      if (t.includes("help") || t.includes("how")) {
+        return "You can work section by section: 1) Fill your contact and hospital details, 2) select CERAMO or POLYMO and implant sizes, 3) provide a clear narrative of what happened, and 4) optionally upload photos or documents.";
+      }
+      return "Thank you for your question. Please include as much factual detail as possible in the narrative. If you need more guidance, you can also contact the vigilance team via the 'Direct contact' button.";
+    }
+
+    function handleChatSend() {
+      const input = document.getElementById("chat-input");
+      if (!input || !input.value.trim()) return;
+      const text = input.value.trim();
+      addChatMessage(text, "user");
+      const reply = botReply(text);
+      setTimeout(() => addChatMessage(reply, "bot"), 200);
+      input.value = "";
+    }
+
+    function initChatbot() {
+      addChatMessage(
+        "Hi, I'm the HipON submission assistant. Ask me how to complete the form or where to find device information.",
+        "bot"
+      );
+      const sendBtn = document.getElementById("chat-send");
+      const input = document.getElementById("chat-input");
+      if (sendBtn) sendBtn.addEventListener("click", handleChatSend);
+      if (input) {
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleChatSend();
+          }
+        });
+      }
+    }
+
+    // -------------------------------
+    // CSV DOWNLOAD (EXCEL)
+    // -------------------------------
+    function handleDownloadCsv() {
+      const all = getAllComplaints();
+      if (!all.length) {
+        showToast("No data available yet.");
+        return;
+      }
+      const csv = toCsv(all);
+      triggerDownload("hipon_combined_complaints.csv", csv);
+    }
+
+    // -------------------------------
+    // MAIN STARTUP
+    // -------------------------------
+    window.addEventListener("DOMContentLoaded", async () => {
+      prefillDates();
+      setupDirectContactButton();
+
+      const form = document.getElementById("complaint-form");
+      if (form) form.addEventListener("submit", handleFormSubmit);
+      const resetBtn = document.getElementById("reset-form");
+      if (resetBtn) resetBtn.addEventListener("click", handleResetForm);
+
+      document
+        .getElementById("report-case-select")
+        ?.addEventListener("change", handleReportSelectChange);
+      document
+        .getElementById("copy-report")
+        ?.addEventListener("click", handleCopyReport);
+      document
+        .getElementById("preview-summary")
+        ?.addEventListener("click", handlePreviewSummary);
+
+      document
+        .getElementById("download-csv")
+        ?.addEventListener("click", handleDownloadCsv);
+
+      initChatbot();
+
+      await loadBaseComplaints();
+      renderKpis();
+      renderComplaintsTable();
+      populateReportSelect();
+    });
+  </script>
+</body>
+</html>
