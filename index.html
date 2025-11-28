@@ -323,7 +323,11 @@
           CERAMO or POLYMO systems.
         </p>
 
-        <form id="complaintForm">
+        <form
+          id="complaintForm"
+          method="POST"
+          action="https://script.google.com/macros/s/AKfycbxcHgZMx28Lz3zFFkLns2hQgQs_gPXuJjZs8-ZwTkzfobwJws9w7jEHcUNxeToZkprJ/exec"
+        >
           <!-- Reporter details -->
           <div class="field">
             <label for="hcpName">Reporter name</label>
@@ -462,25 +466,18 @@
             </div>
           </div>
 
-          <!-- Attachments -->
+          <!-- Attachment info instead of direct file upload -->
           <div class="field full-width">
-            <label for="attachments">Attachments (images or files)</label>
-            <input
-              id="attachments"
-              name="attachments"
-              type="file"
-              multiple
-              accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.zip"
-            />
+            <label for="attachmentInfo">Attachment information / file links</label>
+            <textarea id="attachmentInfo" name="attachmentInfo"></textarea>
             <div class="hint">
-              Optional: upload operative reports, imaging, photos or other supporting documents.
+              If you have supporting images or documents, please paste secure links here
+              (e.g. hospital system, Google Drive, secure cloud storage).
             </div>
           </div>
 
           <button type="submit">Submit report</button>
         </form>
-
-        <div id="formMessage" class="hint" style="margin-top:0.75rem;"></div>
 
         <div class="contact-block">
           <strong>Direct contact:</strong>
@@ -507,9 +504,6 @@
 
   <script>
     (function () {
-      const scriptURL =
-        "https://script.google.com/macros/s/AKfycbxcHgZMx28Lz3zFFkLns2hQgQs_gPXuJjZs8-ZwTkzfobwJws9w7jEHcUNxeToZkprJ/exec";
-
       const countries = [
         "Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic",
         "Denmark","Estonia","Finland","France","Germany","Greece","Hungary",
@@ -551,15 +545,6 @@
         });
       }
 
-      function readFileAsDataURL(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () => reject(reader.error);
-          reader.readAsDataURL(file);
-        });
-      }
-
       document.addEventListener("DOMContentLoaded", () => {
         populateSelect("country", countries);
         populateSelect("role", roles);
@@ -567,81 +552,15 @@
         populateSelect("cupSize", cupSizes);
         populateSelect("headSize", headSizes);
 
-        const form = document.getElementById("complaintForm");
-        const message = document.getElementById("formMessage");
+        // Optional: prefill report date with today
         const reportDateInput = document.getElementById("reportDate");
-
-        function setTodayReportDate() {
-          if (!reportDateInput) return;
+        if (reportDateInput && !reportDateInput.value) {
           const today = new Date();
           const yyyy = today.getFullYear();
           const mm = String(today.getMonth() + 1).padStart(2, "0");
           const dd = String(today.getDate()).padStart(2, "0");
           reportDateInput.value = `${yyyy}-${mm}-${dd}`;
         }
-
-        setTodayReportDate();
-
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
-          message.textContent = "Submitting… please wait.";
-
-          const attachmentsInput = document.getElementById("attachments");
-          const files = attachmentsInput && attachmentsInput.files
-            ? Array.from(attachmentsInput.files)
-            : [];
-
-          try {
-            // Read files as data URLs (Base64)
-            const attachments = [];
-            for (const file of files) {
-              const dataUrl = await readFileAsDataURL(file);
-              attachments.push({
-                name: file.name,
-                type: file.type,
-                data: dataUrl
-              });
-            }
-
-            const payload = {
-              hcpName: document.getElementById("hcpName").value || "",
-              role: document.getElementById("role").value || "",
-              facility: document.getElementById("facility").value || "",
-              country: document.getElementById("country").value || "",
-              city: document.getElementById("city").value || "",
-              email: document.getElementById("email").value || "",
-              phone: document.getElementById("phone").value || "",
-              eventDate: document.getElementById("eventDate").value || "",
-              reportDate: document.getElementById("reportDate").value || "",
-              deviceSystem: document.getElementById("deviceSystem").value || "",
-              stemSize: document.getElementById("stemSize").value || "",
-              cupSize: document.getElementById("cupSize").value || "",
-              headSize: document.getElementById("headSize").value || "",
-              offsetOption: document.getElementById("offsetOption").value || "",
-              neckLength: document.getElementById("neckLength").value || "",
-              lotNumber: document.getElementById("lotNumber").value || "",
-              serialNumber: document.getElementById("serialNumber").value || "",
-              udi: document.getElementById("udi").value || "",
-              narrative: document.getElementById("narrative").value || "",
-              attachments: attachments
-            };
-
-            await fetch(scriptURL, {
-              method: "POST",
-              mode: "no-cors",
-              body: JSON.stringify(payload)
-            });
-
-            message.textContent =
-              "Thank you. Your safety event report has been submitted.";
-            form.reset();
-            setTodayReportDate();
-          } catch (err) {
-            console.error(err);
-            message.textContent =
-              "Network error while submitting the report. Please try again.";
-          }
-        });
       });
     })();
   </script>
