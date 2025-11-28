@@ -200,7 +200,7 @@
       border-radius: 0.7rem;
       border: 1px solid var(--border-subtle);
       background: #04152f;
-      color: var(--text-main);
+      color: #f7fbff;
       padding: 0.55rem 0.7rem;
       font: inherit;
       outline: none;
@@ -323,7 +323,16 @@
           CERAMO or POLYMO systems.
         </p>
 
-        <form id="complaintForm" enctype="multipart/form-data">
+        <!-- Hidden iframe to capture the Apps Script response -->
+        <iframe name="submitFrame" id="submitFrame" style="display:none;"></iframe>
+
+        <form
+          id="complaintForm"
+          enctype="multipart/form-data"
+          method="POST"
+          action="https://script.google.com/macros/s/AKfycbxcHgZMx28Lz3zFFkLns2hQgQs_gPXuJjZs8-ZwTkzfobwJws9w7jEHcUNxeToZkprJ/exec"
+          target="submitFrame"
+        >
           <!-- Reporter details -->
           <div class="field">
             <label for="hcpName">Reporter name</label>
@@ -507,9 +516,6 @@
 
   <script>
     (function () {
-      // Your deployed Apps Script Web App URL:
-      const scriptURL = "https://script.google.com/macros/s/AKfycbxcHgZMx28Lz3zFFkLns2hQgQs_gPXuJjZs8-ZwTkzfobwJws9w7jEHcUNxeToZkprJ/exec";
-
       const countries = [
         "Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic",
         "Denmark","Estonia","Finland","France","Germany","Greece","Hungary",
@@ -559,46 +565,35 @@
         populateSelect("headSize", headSizes);
 
         const reportDateInput = document.getElementById("reportDate");
-        if (reportDateInput && !reportDateInput.value) {
+        const form = document.getElementById("complaintForm");
+        const message = document.getElementById("formMessage");
+        const iframe = document.getElementById("submitFrame");
+
+        // Set default report date to today
+        function setTodayReportDate() {
+          if (!reportDateInput) return;
           const today = new Date();
           const yyyy = today.getFullYear();
           const mm = String(today.getMonth() + 1).padStart(2, "0");
           const dd = String(today.getDate()).padStart(2, "0");
           reportDateInput.value = `${yyyy}-${mm}-${dd}`;
         }
+        setTodayReportDate();
 
-        const form = document.getElementById("complaintForm");
-        const message = document.getElementById("formMessage");
-
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
+        // Show "submitting" message when form is sent
+        form.addEventListener("submit", () => {
+          form.dataset.submitting = "true";
           message.textContent = "Submitting… please wait.";
+        });
 
-          const formData = new FormData(form);
-
-          try {
-            // Use no-cors to avoid browser CORS issues; fire-and-forget
-            await fetch(scriptURL, {
-              method: "POST",
-              body: formData,
-              mode: "no-cors"
-            });
-
+        // When iframe loads (response from Apps Script), show success
+        iframe.addEventListener("load", () => {
+          if (form.dataset.submitting === "true") {
             message.textContent =
               "Thank you. Your safety event report has been submitted.";
             form.reset();
-
-            if (reportDateInput) {
-              const today = new Date();
-              const yyyy = today.getFullYear();
-              const mm = String(today.getMonth() + 1).padStart(2, "0");
-              const dd = String(today.getDate()).padStart(2, "0");
-              reportDateInput.value = `${yyyy}-${mm}-${dd}`;
-            }
-          } catch (err) {
-            console.error(err);
-            message.textContent =
-              "Network error while submitting the report. Please try again.";
+            setTodayReportDate();
+            form.dataset.submitting = "false";
           }
         });
       });
