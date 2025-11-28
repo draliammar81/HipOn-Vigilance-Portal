@@ -599,11 +599,10 @@
               attachments.push({
                 name: file.name,
                 type: file.type,
-                data: dataUrl   // will be decoded in Apps Script
+                data: dataUrl
               });
             }
 
-            // Collect other fields
             const payload = {
               hcpName: document.getElementById("hcpName").value || "",
               role: document.getElementById("role").value || "",
@@ -627,7 +626,6 @@
               attachments: attachments
             };
 
-            // Send JSON payload; use no-cors and don't try to read response
             await fetch(scriptURL, {
               method: "POST",
               mode: "no-cors",
