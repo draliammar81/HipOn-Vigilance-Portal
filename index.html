@@ -25,7 +25,6 @@
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         sans-serif;
-      /* mix of different blue tones */
       background:
         radial-gradient(circle at top left, #0a4b88, transparent 55%),
         radial-gradient(circle at top right, #0b70b8, transparent 55%),
@@ -45,7 +44,6 @@
       padding: 1.5rem 1.5rem 3rem;
     }
 
-    /* Header / logo */
     .header {
       display: flex;
       align-items: center;
@@ -85,7 +83,6 @@
       color: var(--text-muted);
     }
 
-    /* Device hero cards */
     .devices {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -114,7 +111,6 @@
       text-transform: uppercase;
     }
 
-    /* Mission / vision block */
     .mission-card {
       margin-bottom: 2rem;
       background: rgba(0, 8, 26, 0.8);
@@ -137,7 +133,6 @@
       font-size: 0.95rem;
     }
 
-    /* Layout for form + chatbot */
     .content-columns {
       display: grid;
       grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.4fr);
@@ -172,7 +167,6 @@
       font-size: 0.95rem;
     }
 
-    /* Form */
     form {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -282,7 +276,6 @@
     <!-- HEADER WITH LOGO -->
     <header class="header">
       <div class="brand">
-        <!-- Same folder as HTML -->
         <img src="Logo.png" alt="HipOn logo" />
         <div class="brand-title">
           <h1>HipOn Vigilance Portal</h1>
@@ -322,7 +315,7 @@
     </section>
 
     <section class="content-columns">
-      <!-- LEFT: submission form ONLY (Julius AI removed) -->
+      <!-- LEFT: submission form -->
       <section class="card">
         <h2>Submit a Safety Event</h2>
         <p>
@@ -330,7 +323,7 @@
           CERAMO or POLYMO systems.
         </p>
 
-        <form id="complaintForm">
+        <form id="complaintForm" enctype="multipart/form-data">
           <!-- Reporter details -->
           <div class="field">
             <label for="hcpName">Reporter name</label>
@@ -447,6 +440,20 @@
             <input id="serialNumber" name="serialNumber" type="text" />
           </div>
 
+          <!-- UDI field (re-added) -->
+          <div class="field full-width">
+            <label for="udi">UDI (Unique Device Identification)</label>
+            <input
+              id="udi"
+              name="udi"
+              type="text"
+              placeholder="Example: (01)07612345678901(17)261231(10)LOT123456"
+            />
+            <div class="hint">
+              Example format: (01)&lt;GTIN&gt;(17)&lt;YYMMDD expiry&gt;(10)&lt;lot&gt; – enter as it appears on the label.
+            </div>
+          </div>
+
           <!-- Narrative -->
           <div class="field full-width">
             <label for="narrative">Event description</label>
@@ -456,12 +463,26 @@
             </div>
           </div>
 
+          <!-- Attachments -->
+          <div class="field full-width">
+            <label for="attachments">Attachments (images or files)</label>
+            <input
+              id="attachments"
+              name="attachments"
+              type="file"
+              multiple
+              accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.zip"
+            />
+            <div class="hint">
+              Optional: upload operative reports, imaging, photos or other supporting documents.
+            </div>
+          </div>
+
           <button type="submit">Submit report</button>
         </form>
 
         <div id="formMessage" class="hint" style="margin-top:0.75rem;"></div>
 
-        <!-- Direct contact text – no phone number / email shown -->
         <div class="contact-block">
           <strong>Direct contact:</strong>
           For urgent matters, please use your usual HipOn contact route or the vigilance contact information
@@ -487,58 +508,22 @@
 
   <script>
     (function () {
-      // --- CONFIG / LOOKUP ARRAYS (used ONLY for dropdowns) ---
+      // ====== CONFIG ======
+      // Replace this AFTER you deploy the Apps Script as a Web App:
+      const scriptURL = "https://script.google.com/macros/s/AKfycbwR9by4USHq_qvXbCFBzZKBZ-PsG1FNxktk1eYFe0WinpNhPYPbJFtoiy7kSGSsVto8/exec";
 
-      // All European countries (EU + EEA) plus Switzerland and nearby non-EU states
+      // Countries: EU + EEA + Switzerland + neighbouring European states
       const countries = [
-        // EU
-        "Austria",
-        "Belgium",
-        "Bulgaria",
-        "Croatia",
-        "Cyprus",
-        "Czech Republic",
-        "Denmark",
-        "Estonia",
-        "Finland",
-        "France",
-        "Germany",
-        "Greece",
-        "Hungary",
-        "Ireland",
-        "Italy",
-        "Latvia",
-        "Lithuania",
-        "Luxembourg",
-        "Malta",
-        "Netherlands",
-        "Poland",
-        "Portugal",
-        "Romania",
-        "Slovakia",
-        "Slovenia",
-        "Spain",
-        "Sweden",
-        // EEA / associated
-        "Norway",
-        "Iceland",
-        "Liechtenstein",
-        // Other European / neighbouring
-        "Switzerland",
-        "United Kingdom",
-        "Albania",
-        "Bosnia and Herzegovina",
-        "Serbia",
-        "North Macedonia",
-        "Montenegro",
-        "Kosovo",
-        "Moldova",
-        "Ukraine",
-        "Belarus",
-        "Andorra",
-        "Monaco",
-        "San Marino",
-        "Vatican City",
+        "Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic",
+        "Denmark","Estonia","Finland","France","Germany","Greece","Hungary",
+        "Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta",
+        "Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia",
+        "Spain","Sweden",
+        "Norway","Iceland","Liechtenstein",
+        "Switzerland","United Kingdom",
+        "Albania","Bosnia and Herzegovina","Serbia","North Macedonia",
+        "Montenegro","Kosovo","Moldova","Ukraine","Belarus",
+        "Andorra","Monaco","San Marino","Vatican City",
         "Other Europe / EEA"
       ];
 
@@ -552,36 +537,15 @@
       ];
 
       const cities = [
-        "Paris",
-        "Berlin",
-        "Rome",
-        "Madrid",
-        "Stockholm",
-        "Amsterdam",
-        "Brussels",
-        "Vienna",
-        "Lyon",
-        "Hamburg",
-        "Milan",
-        "Barcelona",
-        "Uppsala",
-        "Rotterdam",
-        "Ghent",
-        "Graz"
+        "Paris","Berlin","Rome","Madrid","Stockholm","Amsterdam","Brussels",
+        "Vienna","Lyon","Hamburg","Milan","Barcelona","Uppsala","Rotterdam",
+        "Ghent","Graz"
       ];
 
       const stemSizes = ["#1", "#2", "#3", "#4", "#5", "#6", "#7", "#8"];
       const cupSizes = [
-        "44 mm",
-        "46 mm",
-        "48 mm",
-        "50 mm",
-        "52 mm",
-        "54 mm",
-        "56 mm",
-        "58 mm",
-        "60 mm",
-        "62 mm"
+        "44 mm","46 mm","48 mm","50 mm","52 mm","54 mm",
+        "56 mm","58 mm","60 mm","62 mm"
       ];
       const headSizes = ["28 mm", "32 mm", "36 mm", "40 mm"];
 
@@ -604,7 +568,7 @@
         populateSelect("cupSize", cupSizes);
         populateSelect("headSize", headSizes);
 
-        // Pre-fill report date with today's date for better completeness
+        // Pre-fill report date with today's date
         const reportDateInput = document.getElementById("reportDate");
         if (reportDateInput && !reportDateInput.value) {
           const today = new Date();
@@ -617,30 +581,53 @@
         const form = document.getElementById("complaintForm");
         const message = document.getElementById("formMessage");
 
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
           e.preventDefault();
+          message.textContent = "Submitting… please wait.";
 
-          // HERE: connect to your Google Sheet / Apps Script endpoint.
-          // Example (to be adapted to your own URL):
-          //
-          // const data = new FormData(form);
-          // fetch("YOUR_APPS_SCRIPT_WEB_APP_URL", {
-          //   method: "POST",
-          //   body: data,
-          // }).then(() => { ... });
+          const formData = new FormData(form);
 
-          message.textContent =
-            "Thank you. Your safety event report has been submitted.";
-          form.reset();
+          try {
+            const response = await fetch(scriptURL, {
+              method: "POST",
+              body: formData
+            });
+
+            // If Apps Script returns JSON with success info
+            let ok = response.ok;
+            try {
+              const data = await response.json();
+              if (data && data.result === "success") {
+                ok = true;
+              }
+            } catch (_) {
+              // If JSON parse fails, fall back to HTTP status
+            }
+
+            if (ok) {
+              message.textContent =
+                "Thank you. Your safety event report has been submitted.";
+              form.reset();
+
+              // Re-set today's date after reset
+              if (reportDateInput) {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, "0");
+                const dd = String(today.getDate()).padStart(2, "0");
+                reportDateInput.value = `${yyyy}-${mm}-${dd}`;
+              }
+            } else {
+              message.textContent =
+                "There was a problem submitting the report. Please try again.";
+            }
+          } catch (err) {
+            console.error(err);
+            message.textContent =
+              "Network error while submitting the report. Please try again.";
+          }
         });
       });
-
-      // NOTE:
-      // The previous script that generated fake complaints and
-      // downloaded hipon_fake_complaints.json has been removed so that
-      // existing complaints are not visible or downloadable from
-      // the public portal. Analysis can now be done privately via
-      // your Google Sheet connection.
     })();
   </script>
 </body>
