@@ -349,11 +349,10 @@
             </select>
           </div>
 
+          <!-- CITY AS FREE TEXT -->
           <div class="field">
             <label for="city">City</label>
-            <select id="city" name="city">
-              <option value="">Select city…</option>
-            </select>
+            <input id="city" name="city" type="text" />
           </div>
 
           <div class="field">
@@ -440,7 +439,7 @@
             <input id="serialNumber" name="serialNumber" type="text" />
           </div>
 
-          <!-- UDI field (re-added) -->
+          <!-- UDI field -->
           <div class="field full-width">
             <label for="udi">UDI (Unique Device Identification)</label>
             <input
@@ -509,10 +508,9 @@
   <script>
     (function () {
       // ====== CONFIG ======
-      // Replace this AFTER you deploy the Apps Script as a Web App:
-      const scriptURL = "https://script.google.com/macros/s/AKfycbwR9by4USHq_qvXbCFBzZKBZ-PsG1FNxktk1eYFe0WinpNhPYPbJFtoiy7kSGSsVto8/exec";
+      // Your deployed Apps Script Web App URL:
+      const scriptURL = "https://script.google.com/macros/s/AKfycbxcHgZMx28Lz3zFFkLns2hQgQs_gPXuJjZs8-ZwTkzfobwJws9w7jEHcUNxeToZkprJ/exec";
 
-      // Countries: EU + EEA + Switzerland + neighbouring European states
       const countries = [
         "Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic",
         "Denmark","Estonia","Finland","France","Germany","Greece","Hungary",
@@ -536,12 +534,6 @@
         "Other HCP"
       ];
 
-      const cities = [
-        "Paris","Berlin","Rome","Madrid","Stockholm","Amsterdam","Brussels",
-        "Vienna","Lyon","Hamburg","Milan","Barcelona","Uppsala","Rotterdam",
-        "Ghent","Graz"
-      ];
-
       const stemSizes = ["#1", "#2", "#3", "#4", "#5", "#6", "#7", "#8"];
       const cupSizes = [
         "44 mm","46 mm","48 mm","50 mm","52 mm","54 mm",
@@ -563,12 +555,10 @@
       document.addEventListener("DOMContentLoaded", () => {
         populateSelect("country", countries);
         populateSelect("role", roles);
-        populateSelect("city", cities);
         populateSelect("stemSize", stemSizes);
         populateSelect("cupSize", cupSizes);
         populateSelect("headSize", headSizes);
 
-        // Pre-fill report date with today's date
         const reportDateInput = document.getElementById("reportDate");
         if (reportDateInput && !reportDateInput.value) {
           const today = new Date();
@@ -588,38 +578,23 @@
           const formData = new FormData(form);
 
           try {
-            const response = await fetch(scriptURL, {
+            // Use no-cors to avoid browser CORS issues; fire-and-forget
+            await fetch(scriptURL, {
               method: "POST",
-              body: formData
+              body: formData,
+              mode: "no-cors"
             });
 
-            // If Apps Script returns JSON with success info
-            let ok = response.ok;
-            try {
-              const data = await response.json();
-              if (data && data.result === "success") {
-                ok = true;
-              }
-            } catch (_) {
-              // If JSON parse fails, fall back to HTTP status
-            }
+            message.textContent =
+              "Thank you. Your safety event report has been submitted.";
+            form.reset();
 
-            if (ok) {
-              message.textContent =
-                "Thank you. Your safety event report has been submitted.";
-              form.reset();
-
-              // Re-set today's date after reset
-              if (reportDateInput) {
-                const today = new Date();
-                const yyyy = today.getFullYear();
-                const mm = String(today.getMonth() + 1).padStart(2, "0");
-                const dd = String(today.getDate()).padStart(2, "0");
-                reportDateInput.value = `${yyyy}-${mm}-${dd}`;
-              }
-            } else {
-              message.textContent =
-                "There was a problem submitting the report. Please try again.";
+            if (reportDateInput) {
+              const today = new Date();
+              const yyyy = today.getFullYear();
+              const mm = String(today.getMonth() + 1).padStart(2, "0");
+              const dd = String(today.getDate()).padStart(2, "0");
+              reportDateInput.value = `${yyyy}-${mm}-${dd}`;
             }
           } catch (err) {
             console.error(err);
