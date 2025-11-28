@@ -466,16 +466,6 @@
             </div>
           </div>
 
-          <!-- Attachment info instead of direct file upload -->
-          <div class="field full-width">
-            <label for="attachmentInfo">Attachment information / file links</label>
-            <textarea id="attachmentInfo" name="attachmentInfo"></textarea>
-            <div class="hint">
-              If you have supporting images or documents, please paste secure links here
-              (e.g. hospital system, Google Drive, secure cloud storage).
-            </div>
-          </div>
-
           <button type="submit">Submit report</button>
         </form>
 
@@ -552,7 +542,7 @@
         populateSelect("cupSize", cupSizes);
         populateSelect("headSize", headSizes);
 
-        // Optional: prefill report date with today
+        // Prefill report date with today if empty
         const reportDateInput = document.getElementById("reportDate");
         if (reportDateInput && !reportDateInput.value) {
           const today = new Date();
