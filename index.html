@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>HipOn Vigilance Portal</title>
+  <title>HipOn Vigilance Portal – Safety Events Reporting</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -90,7 +90,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .device-card {
@@ -112,6 +112,29 @@
       font-size: 1.1rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+    }
+
+    /* Mission / vision block */
+    .mission-card {
+      margin-bottom: 2rem;
+      background: rgba(0, 8, 26, 0.8);
+      border-radius: 1.25rem;
+      border: 1px solid var(--border-subtle);
+      padding: 1.5rem 1.75rem;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .mission-card h2 {
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      font-size: 1.15rem;
+    }
+
+    .mission-card p {
+      margin: 0.25rem 0;
+      color: var(--text-muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
     }
 
     /* Layout for form + chatbot */
@@ -263,7 +286,7 @@
         <img src="Logo.png" alt="HipOn logo" />
         <div class="brand-title">
           <h1>HipOn Vigilance Portal</h1>
-          <span>CERAMO &amp; POLYMO – Event Reporting</span>
+          <span>CERAMO &amp; POLYMO – Safety Events Reporting</span>
         </div>
       </div>
     </header>
@@ -280,13 +303,31 @@
       </article>
     </section>
 
+    <!-- MISSION & VISION -->
+    <section class="mission-card">
+      <h2>HipOn Mission &amp; Vision</h2>
+      <p>
+        HipON is committed to evidence-based performance and uncompromising quality in Total Hip Replacement,
+        building on a longstanding history of collaboration with leading European centers.
+      </p>
+      <p>
+        This portal has been created with a single purpose: patient safety, which we consider the cornerstone of
+        everything we do. Its aim is to enable rapid, compliant, and accurate analysis of any safety event in which
+        our CERAMO or POLYMO systems were used.
+      </p>
+      <p>
+        A dedicated team of clinical, engineering, and vigilance specialists works around the clock to deliver
+        world-class case reviews, always putting the interests of patients and surgeons first.
+      </p>
+    </section>
+
     <section class="content-columns">
       <!-- LEFT: submission form ONLY (Julius AI removed) -->
       <section class="card">
-        <h2>Submit a Vigilance Case</h2>
+        <h2>Submit a Safety Event</h2>
         <p>
-          Please complete the form below to report any incident, complaint or
-          safety concern related to HipOn CERAMO or POLYMO systems.
+          Please complete the form below to report any incident, complaint or safety concern related to HipOn
+          CERAMO or POLYMO systems.
         </p>
 
         <form id="complaintForm">
@@ -323,18 +364,27 @@
           </div>
 
           <div class="field">
-            <label for="email">Email (optional)</label>
-            <input id="email" name="email" type="email" />
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required />
           </div>
 
           <div class="field">
-            <label for="phone">Phone (optional)</label>
-            <input id="phone" name="phone" type="tel" />
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" required />
           </div>
 
+          <!-- Dates -->
           <div class="field">
             <label for="eventDate">Event date</label>
             <input id="eventDate" name="eventDate" type="date" required />
+          </div>
+
+          <div class="field">
+            <label for="reportDate">Date of report (case creation)</label>
+            <input id="reportDate" name="reportDate" type="date" />
+            <div class="hint">
+              Used together with the event date to improve analysis of reporting timelines.
+            </div>
           </div>
 
           <!-- Device info -->
@@ -402,8 +452,7 @@
             <label for="narrative">Event description</label>
             <textarea id="narrative" name="narrative" required></textarea>
             <div class="hint">
-              Describe what happened, when it occurred, findings, patient
-              outcome and any actions taken.
+              Describe what happened, when it occurred, findings, patient outcome and any actions taken.
             </div>
           </div>
 
@@ -415,9 +464,8 @@
         <!-- Direct contact text – no phone number / email shown -->
         <div class="contact-block">
           <strong>Direct contact:</strong>
-          For urgent matters, please use your usual HipOn contact route
-          or the vigilance contact information supplied in the product
-          documentation.
+          For urgent matters, please use your usual HipOn contact route or the vigilance contact information
+          supplied in the product documentation.
         </div>
       </section>
 
@@ -425,9 +473,8 @@
       <aside class="card">
         <h2>Chat &amp; Support</h2>
         <p>
-          For general questions about this portal you can use the chatbot
-          below. Clinical or regulatory questions should be directed to your
-          HipOn representative or local vigilance contact.
+          For general questions about this portal you can use the chatbot below. Clinical or regulatory questions
+          should be directed to your HipOn representative or local vigilance contact.
         </p>
 
         <div class="chatbot">
@@ -441,16 +488,58 @@
   <script>
     (function () {
       // --- CONFIG / LOOKUP ARRAYS (used ONLY for dropdowns) ---
+
+      // All European countries (EU + EEA) plus Switzerland and nearby non-EU states
       const countries = [
+        // EU
+        "Austria",
+        "Belgium",
+        "Bulgaria",
+        "Croatia",
+        "Cyprus",
+        "Czech Republic",
+        "Denmark",
+        "Estonia",
+        "Finland",
         "France",
         "Germany",
+        "Greece",
+        "Hungary",
+        "Ireland",
         "Italy",
+        "Latvia",
+        "Lithuania",
+        "Luxembourg",
+        "Malta",
+        "Netherlands",
+        "Poland",
+        "Portugal",
+        "Romania",
+        "Slovakia",
+        "Slovenia",
         "Spain",
         "Sweden",
-        "Netherlands",
-        "Belgium",
-        "Austria",
-        "Other EU/EEA",
+        // EEA / associated
+        "Norway",
+        "Iceland",
+        "Liechtenstein",
+        // Other European / neighbouring
+        "Switzerland",
+        "United Kingdom",
+        "Albania",
+        "Bosnia and Herzegovina",
+        "Serbia",
+        "North Macedonia",
+        "Montenegro",
+        "Kosovo",
+        "Moldova",
+        "Ukraine",
+        "Belarus",
+        "Andorra",
+        "Monaco",
+        "San Marino",
+        "Vatican City",
+        "Other Europe / EEA"
       ];
 
       const roles = [
@@ -459,7 +548,7 @@
         "Scrub Nurse",
         "Physiotherapist",
         "Radiologist",
-        "Other HCP",
+        "Other HCP"
       ];
 
       const cities = [
@@ -478,7 +567,7 @@
         "Uppsala",
         "Rotterdam",
         "Ghent",
-        "Graz",
+        "Graz"
       ];
 
       const stemSizes = ["#1", "#2", "#3", "#4", "#5", "#6", "#7", "#8"];
@@ -492,7 +581,7 @@
         "56 mm",
         "58 mm",
         "60 mm",
-        "62 mm",
+        "62 mm"
       ];
       const headSizes = ["28 mm", "32 mm", "36 mm", "40 mm"];
 
@@ -515,6 +604,16 @@
         populateSelect("cupSize", cupSizes);
         populateSelect("headSize", headSizes);
 
+        // Pre-fill report date with today's date for better completeness
+        const reportDateInput = document.getElementById("reportDate");
+        if (reportDateInput && !reportDateInput.value) {
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const mm = String(today.getMonth() + 1).padStart(2, "0");
+          const dd = String(today.getDate()).padStart(2, "0");
+          reportDateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+
         const form = document.getElementById("complaintForm");
         const message = document.getElementById("formMessage");
 
@@ -531,13 +630,13 @@
           // }).then(() => { ... });
 
           message.textContent =
-            "Thank you. Your vigilance report has been submitted.";
+            "Thank you. Your safety event report has been submitted.";
           form.reset();
         });
       });
 
       // NOTE:
-      // The previous script that generated 50 fake complaints and
+      // The previous script that generated fake complaints and
       // downloaded hipon_fake_complaints.json has been removed so that
       // existing complaints are not visible or downloadable from
       // the public portal. Analysis can now be done privately via
