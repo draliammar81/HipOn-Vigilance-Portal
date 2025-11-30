@@ -318,6 +318,7 @@
         <button type="button" class="lang-button" data-lang="es">ES</button>
         <button type="button" class="lang-button" data-lang="pt">PT</button>
         <button type="button" class="lang-button" data-lang="de">DE</button>
+        <button type="button" class="lang-button" data-lang="it">IT</button>
       </div>
     </header>
 
@@ -845,6 +846,61 @@
           submitting_message: "Wird gesendet… bitte warten.",
           success_message: "Vielen Dank. Ihre Meldung eines Sicherheitsereignisses wurde übermittelt. Sie können unten einen weiteren Fall melden.",
           error_message: "Beim Senden der Meldung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+        },
+        it: {
+          lang_label: "Lingua:",
+          title_main: "Portale di Vigilanza HipOn",
+          title_sub: "CERAMO e POLYMO – Segnalazione di eventi di sicurezza",
+          mission_title: "Missione e visione di HipOn",
+          mission_p1:
+            "HipON è impegnata in prestazioni basate sull’evidenza e in una qualità senza compromessi nella protesi totale d’anca, " +
+            "forte di una lunga storia di collaborazione con i principali centri europei.",
+          mission_p2:
+            "Questo portale è stato creato con un unico scopo: la sicurezza del paziente, che consideriamo la pietra angolare di tutto ciò che facciamo. " +
+            "Il suo obiettivo è consentire un’analisi rapida, conforme e accurata di qualsiasi evento di sicurezza in cui siano stati utilizzati i nostri sistemi CERAMO o POLYMO.",
+          mission_p3:
+            "Un team dedicato di specialisti clinici, ingegneri e responsabili di vigilanza lavora senza interruzione per fornire revisioni dei casi di livello internazionale, " +
+            "mettendo sempre al primo posto gli interessi dei pazienti e dei chirurghi.",
+          form_title: "Segnala un evento di sicurezza",
+          form_intro:
+            "Compila il modulo seguente per segnalare qualsiasi incidente, reclamo o problema di sicurezza relativo ai sistemi HipOn CERAMO o POLYMO.",
+          label_hcpName: "Nome del segnalatore",
+          label_role: "Ruolo",
+          label_facility: "Ospedale / struttura",
+          label_country: "Paese",
+          label_city: "Città",
+          label_email: "E-mail",
+          label_phone: "Telefono",
+          label_eventDate: "Data dell’evento",
+          label_reportDate: "Data della segnalazione (creazione del caso)",
+          hint_reportDate:
+            "Utilizzata insieme alla data dell’evento per analizzare i tempi di segnalazione.",
+          label_deviceSystem: "Sistema impiantato",
+          label_stemSize: "Misura dello stelo",
+          label_cupSize: "Misura della coppa",
+          label_headSize: "Misura della testa",
+          label_offsetOption: "Offset",
+          label_neckLength: "Lunghezza del collo",
+          label_lotNumber: "Numero di lotto",
+          label_serialNumber: "Numero di serie",
+          label_udi: "UDI (Identificazione univoca del dispositivo)",
+          placeholder_udi: "Esempio: (01)07612345678901(17)261231(10)LOT123456",
+          hint_udi:
+            "Formato di esempio: (01)<GTIN>(17)<YYMMDD scadenza>(10)<lotto> – inserisci l’UDI esattamente come riportata sull’etichetta.",
+          label_narrative: "Descrizione dell’evento",
+          hint_narrative:
+            "Descrivi quanto accaduto, la tempistica, i reperti, l’evoluzione clinica e le azioni intraprese.",
+          submit_button: "Invia segnalazione",
+          contact_heading: "Contatto diretto:",
+          contact_body:
+            "Per questioni urgenti, utilizza i tuoi consueti canali di contatto con HipOn o i riferimenti di vigilanza indicati nella documentazione del prodotto.",
+          chat_title: "Chat e supporto",
+          chat_intro:
+            "Per domande generali su questo portale puoi utilizzare il widget di chat disponibile in questa pagina. " +
+            "Le questioni cliniche o regolatorie devono essere indirizzate al tuo referente HipOn o al contatto locale di vigilanza.",
+          submitting_message: "Invio in corso… attendere prego.",
+          success_message: "Grazie. La tua segnalazione di evento di sicurezza è stata inviata. Puoi inserire un’altra segnalazione qui sotto.",
+          error_message: "Si è verificato un problema durante l’invio. Riprova."
         }
       };
 
@@ -893,7 +949,7 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        // Populate unchanged dropdowns (keep options as-is in English)
+        // Populate unchanged dropdowns
         populateSelect("country", countries);
         populateSelect("role", roles);
         populateSelect("stemSize", stemSizes);
@@ -924,6 +980,15 @@
 
         if (form && iframe) {
           form.addEventListener("submit", () => {
+            // Wrap phone number in parentheses before sending
+            const phoneInput = document.getElementById("phone");
+            if (phoneInput) {
+              const raw = phoneInput.value.trim();
+              if (raw && !(raw.startsWith("(") && raw.endsWith(")"))) {
+                phoneInput.value = `(${raw})`;
+              }
+            }
+
             submitted = true;
             const dict = translations[currentLang] || translations.en;
             if (messageEl) {
