@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-      <script src="https://cdn.botpress.cloud/webchat/v3.3/inject.js"></script>
-<script src="https://files.bpcontent.cloud/2025/11/05/15/20251105150803-DSRC8PF2.js" defer></script>
+  <script src="https://cdn.botpress.cloud/webchat/v3.3/inject.js"></script>
+  <script src="https://files.bpcontent.cloud/2025/11/05/15/20251105150803-DSRC8PF2.js" defer></script>
+
   <meta charset="UTF-8" />
   <title>HipOn Vigilance Portal – Safety Events Reporting</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -56,6 +57,7 @@
       border-radius: 1rem;
       border: 1px solid var(--border-subtle);
       backdrop-filter: blur(10px);
+      gap: 1rem;
     }
 
     .brand {
@@ -83,6 +85,34 @@
     .brand-title span {
       font-size: 0.85rem;
       color: var(--text-muted);
+    }
+
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .lang-switcher label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .lang-switcher select {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #04152f;
+      color: #f7fbff;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .lang-switcher select:focus {
+      border-color: var(--blue-accent);
+      box-shadow: 0 0 0 1px rgba(55, 192, 255, 0.4);
     }
 
     .devices {
@@ -275,14 +305,25 @@
 </head>
 <body>
   <div class="page">
-    <!-- HEADER WITH LOGO -->
+    <!-- HEADER WITH LOGO + LANGUAGE SWITCHER -->
     <header class="header">
       <div class="brand">
         <img src="Logo.png" alt="HipOn logo" />
         <div class="brand-title">
-          <h1>HipOn Vigilance Portal</h1>
-          <span>CERAMO &amp; POLYMO – Safety Events Reporting</span>
+          <h1 id="headerTitle">HipOn Vigilance Portal</h1>
+          <span id="headerSubtitle">CERAMO &amp; POLYMO – Safety Events Reporting</span>
         </div>
+      </div>
+
+      <div class="lang-switcher">
+        <label for="languageSwitcher" id="langLabel">Language:</label>
+        <select id="languageSwitcher">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+          <option value="pt">Português</option>
+          <option value="de">Deutsch</option>
+        </select>
       </div>
     </header>
 
@@ -290,27 +331,27 @@
     <section class="devices">
       <article class="device-card">
         <img src="devices ceramo.png" alt="CERAMO device" />
-        <h2>CERAMO System</h2>
+        <h2 id="ceramoTitle">CERAMO System</h2>
       </article>
       <article class="device-card">
         <img src="devices polymo.png" alt="POLYMO device" />
-        <h2>POLYMO System</h2>
+        <h2 id="polymoTitle">POLYMO System</h2>
       </article>
     </section>
 
     <!-- MISSION & VISION -->
     <section class="mission-card">
-      <h2>HipOn Mission &amp; Vision</h2>
-      <p>
+      <h2 id="missionTitle">HipOn Mission &amp; Vision</h2>
+      <p id="missionP1">
         HipON is committed to evidence-based performance and uncompromising quality in Total Hip Replacement,
         building on a longstanding history of collaboration with leading European centers.
       </p>
-      <p>
+      <p id="missionP2">
         This portal has been created with a single purpose: patient safety, which we consider the cornerstone of
         everything we do. Its aim is to enable rapid, compliant, and accurate analysis of any safety event in which
         our CERAMO or POLYMO systems were used.
       </p>
-      <p>
+      <p id="missionP3">
         A dedicated team of clinical, engineering, and vigilance specialists works around the clock to deliver
         world-class case reviews, always putting the interests of patients and surgeons first.
       </p>
@@ -319,8 +360,8 @@
     <section class="content-columns">
       <!-- LEFT: submission form -->
       <section class="card">
-        <h2>Submit a Safety Event</h2>
-        <p>
+        <h2 id="submitTitle">Submit a Safety Event</h2>
+        <p id="submitIntro">
           Please complete the form below to report any incident, complaint or safety concern related to HipOn
           CERAMO or POLYMO systems.
         </p>
@@ -332,24 +373,24 @@
         >
           <!-- Reporter details -->
           <div class="field">
-            <label for="hcpName">Reporter name</label>
+            <label for="hcpName" id="labelReporterName">Reporter name</label>
             <input id="hcpName" name="hcpName" type="text" required />
           </div>
 
           <div class="field">
-            <label for="role">Role</label>
+            <label for="role" id="labelRole">Role</label>
             <select id="role" name="role" required>
               <option value="">Select role…</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="facility">Hospital / facility</label>
+            <label for="facility" id="labelFacility">Hospital / facility</label>
             <input id="facility" name="facility" type="text" required />
           </div>
 
           <div class="field">
-            <label for="country">Country</label>
+            <label for="country" id="labelCountry">Country</label>
             <select id="country" name="country" required>
               <option value="">Select country…</option>
             </select>
@@ -357,37 +398,37 @@
 
           <!-- CITY AS FREE TEXT -->
           <div class="field">
-            <label for="city">City</label>
+            <label for="city" id="labelCity">City</label>
             <input id="city" name="city" type="text" />
           </div>
 
           <div class="field">
-            <label for="email">Email</label>
+            <label for="email" id="labelEmail">Email</label>
             <input id="email" name="email" type="email" required />
           </div>
 
           <div class="field">
-            <label for="phone">Phone</label>
+            <label for="phone" id="labelPhone">Phone</label>
             <input id="phone" name="phone" type="tel" required />
           </div>
 
           <!-- Dates -->
           <div class="field">
-            <label for="eventDate">Event date</label>
+            <label for="eventDate" id="labelEventDate">Event date</label>
             <input id="eventDate" name="eventDate" type="date" required />
           </div>
 
           <div class="field">
-            <label for="reportDate">Date of report (case creation)</label>
+            <label for="reportDate" id="labelReportDate">Date of report (case creation)</label>
             <input id="reportDate" name="reportDate" type="date" />
-            <div class="hint">
+            <div class="hint" id="hintReportDate">
               Used together with the event date to improve analysis of reporting timelines.
             </div>
           </div>
 
           <!-- Device info -->
           <div class="field">
-            <label for="deviceSystem">Device system</label>
+            <label for="deviceSystem" id="labelDeviceSystem">Device system</label>
             <select id="deviceSystem" name="deviceSystem" required>
               <option value="">Select system…</option>
               <option value="CERAMO">CERAMO</option>
@@ -396,28 +437,28 @@
           </div>
 
           <div class="field">
-            <label for="stemSize">Stem size</label>
+            <label for="stemSize" id="labelStemSize">Stem size</label>
             <select id="stemSize" name="stemSize">
               <option value="">Select size…</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="cupSize">Cup size</label>
+            <label for="cupSize" id="labelCupSize">Cup size</label>
             <select id="cupSize" name="cupSize">
               <option value="">Select size…</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="headSize">Head size</label>
+            <label for="headSize" id="labelHeadSize">Head size</label>
             <select id="headSize" name="headSize">
               <option value="">Select size…</option>
             </select>
           </div>
 
           <div class="field">
-            <label for="offsetOption">Offset</label>
+            <label for="offsetOption" id="labelOffset">Offset</label>
             <select id="offsetOption" name="offsetOption">
               <option value="">Select option…</option>
               <option value="Normal">Normal</option>
@@ -426,7 +467,7 @@
           </div>
 
           <div class="field">
-            <label for="neckLength">Neck length</label>
+            <label for="neckLength" id="labelNeckLength">Neck length</label>
             <select id="neckLength" name="neckLength">
               <option value="">Select length…</option>
               <option value="S">S</option>
@@ -436,42 +477,42 @@
           </div>
 
           <div class="field">
-            <label for="lotNumber">Lot number</label>
+            <label for="lotNumber" id="labelLotNumber">Lot number</label>
             <input id="lotNumber" name="lotNumber" type="text" />
           </div>
 
           <div class="field">
-            <label for="serialNumber">Serial number</label>
+            <label for="serialNumber" id="labelSerialNumber">Serial number</label>
             <input id="serialNumber" name="serialNumber" type="text" />
           </div>
 
           <!-- UDI field -->
           <div class="field full-width">
-            <label for="udi">UDI (Unique Device Identification)</label>
+            <label for="udi" id="labelUdi">UDI (Unique Device Identification)</label>
             <input
               id="udi"
               name="udi"
               type="text"
               placeholder="Example: (01)07612345678901(17)261231(10)LOT123456"
             />
-            <div class="hint">
+            <div class="hint" id="hintUdi">
               Example format: (01)&lt;GTIN&gt;(17)&lt;YYMMDD expiry&gt;(10)&lt;lot&gt; – enter as it appears on the label.
             </div>
           </div>
 
           <!-- Narrative -->
           <div class="field full-width">
-            <label for="narrative">Event description</label>
+            <label for="narrative" id="labelNarrative">Event description</label>
             <textarea id="narrative" name="narrative" required></textarea>
-            <div class="hint">
+            <div class="hint" id="hintNarrative">
               Describe what happened, when it occurred, findings, patient outcome and any actions taken.
             </div>
           </div>
 
-          <button type="submit">Submit report</button>
+          <button type="submit" id="submitButtonText">Submit report</button>
         </form>
 
-        <div class="contact-block">
+        <div class="contact-block" id="contactBlock">
           <strong>Direct contact:</strong>
           For urgent matters, please use your usual HipOn contact route or the vigilance contact information
           supplied in the product documentation.
@@ -480,15 +521,14 @@
 
       <!-- RIGHT: chatbot / support card -->
       <aside class="card">
-        <h2>Chat &amp; Support</h2>
-        <p>
-          For general questions about this portal you can use the chatbot below. Clinical or regulatory questions
-          should be directed to your HipOn representative or local vigilance contact.
+        <h2 id="chatTitle">Chat &amp; Support</h2>
+        <p id="chatIntro">
+          For general questions about this portal you can use the chat assistant available on this page.
+          Clinical or regulatory questions should be directed to your HipOn representative or local vigilance contact.
         </p>
 
-        <div class="chatbot">
-          <!-- Replace this with your actual chatbot embed code -->
-          Chatbot placeholder – insert your chatbot widget here.
+        <div class="chatbot" id="chatDescription">
+          The virtual assistant can be opened via the chat icon provided by HipOn on this portal.
         </div>
       </aside>
     </section>
@@ -510,7 +550,52 @@
         "Other Europe / EEA"
       ];
 
-      const roles = [
+      // roles are kept in English as values (for data consistency),
+      // but labels can be translated
+      const roleLabels = {
+        en: {
+          "Orthopedic Surgeon": "Orthopedic Surgeon",
+          "OR Nurse": "OR Nurse",
+          "Scrub Nurse": "Scrub Nurse",
+          "Physiotherapist": "Physiotherapist",
+          "Radiologist": "Radiologist",
+          "Other HCP": "Other HCP"
+        },
+        fr: {
+          "Orthopedic Surgeon": "Chirurgien orthopédiste",
+          "OR Nurse": "Infirmier(ère) de bloc opératoire",
+          "Scrub Nurse": "Infirmier(ère) instrumentiste",
+          "Physiotherapist": "Kinésithérapeute",
+          "Radiologist": "Radiologue",
+          "Other HCP": "Autre professionnel de santé"
+        },
+        es: {
+          "Orthopedic Surgeon": "Cirujano ortopédico",
+          "OR Nurse": "Enfermero/a de quirófano",
+          "Scrub Nurse": "Enfermero/a instrumentista",
+          "Physiotherapist": "Fisioterapeuta",
+          "Radiologist": "Radiólogo/a",
+          "Other HCP": "Otro profesional sanitario"
+        },
+        pt: {
+          "Orthopedic Surgeon": "Cirurgião ortopédico",
+          "OR Nurse": "Enfermeiro(a) de bloco operatório",
+          "Scrub Nurse": "Enfermeiro(a) instrumentador(a)",
+          "Physiotherapist": "Fisioterapeuta",
+          "Radiologist": "Radiologista",
+          "Other HCP": "Outro profissional de saúde"
+        },
+        de: {
+          "Orthopedic Surgeon": "Orthopädischer Chirurg",
+          "OR Nurse": "OP-Pflegekraft",
+          "Scrub Nurse": "Instrumentierender Pfleger / Schwester",
+          "Physiotherapist": "Physiotherapeut(in)",
+          "Radiologist": "Radiologe / Radiologin",
+          "Other HCP": "Andere medizinische Fachkraft"
+        }
+      };
+
+      const roleValues = [
         "Orthopedic Surgeon",
         "OR Nurse",
         "Scrub Nurse",
@@ -526,35 +611,41 @@
       ];
       const headSizes = ["28 mm", "32 mm", "36 mm", "40 mm"];
 
-      function populateSelect(id, options) {
-        const select = document.getElementById(id);
-        if (!select) return;
-        options.forEach((val) => {
-          const opt = document.createElement("option");
-          opt.value = val;
-          opt.textContent = val;
-          select.appendChild(opt);
-        });
-      }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        populateSelect("country", countries);
-        populateSelect("role", roles);
-        populateSelect("stemSize", stemSizes);
-        populateSelect("cupSize", cupSizes);
-        populateSelect("headSize", headSizes);
-
-        // Prefill report date with today if empty
-        const reportDateInput = document.getElementById("reportDate");
-        if (reportDateInput && !reportDateInput.value) {
-          const today = new Date();
-          const yyyy = today.getFullYear();
-          const mm = String(today.getMonth() + 1).padStart(2, "0");
-          const dd = String(today.getDate()).padStart(2, "0");
-          reportDateInput.value = `${yyyy}-${mm}-${dd}`;
-        }
-      });
-    })();
-  </script>
-</body>
-</html>
+      const translations = {
+        en: {
+          title: "HipOn Vigilance Portal – Safety Events Reporting",
+          headerTitle: "HipOn Vigilance Portal",
+          headerSubtitle: "CERAMO & POLYMO – Safety Events Reporting",
+          langLabel: "Language:",
+          ceramoTitle: "CERAMO System",
+          polymoTitle: "POLYMO System",
+          missionTitle: "HipOn Mission & Vision",
+          missionP1: "HipON is committed to evidence-based performance and uncompromising quality in Total Hip Replacement, building on a longstanding history of collaboration with leading European centers.",
+          missionP2: "This portal has been created with a single purpose: patient safety, which we consider the cornerstone of everything we do. Its aim is to enable rapid, compliant, and accurate analysis of any safety event in which our CERAMO or POLYMO systems were used.",
+          missionP3: "A dedicated team of clinical, engineering, and vigilance specialists works around the clock to deliver world-class case reviews, always putting the interests of patients and surgeons first.",
+          submitTitle: "Submit a Safety Event",
+          submitIntro: "Please complete the form below to report any incident, complaint or safety concern related to HipOn CERAMO or POLYMO systems.",
+          labelReporterName: "Reporter name",
+          labelRole: "Role",
+          labelFacility: "Hospital / facility",
+          labelCountry: "Country",
+          labelCity: "City",
+          labelEmail: "Email",
+          labelPhone: "Phone",
+          labelEventDate: "Event date",
+          labelReportDate: "Date of report (case creation)",
+          hintReportDate: "Used together with the event date to improve analysis of reporting timelines.",
+          labelDeviceSystem: "Device system",
+          labelStemSize: "Stem size",
+          labelCupSize: "Cup size",
+          labelHeadSize: "Head size",
+          labelOffset: "Offset",
+          labelNeckLength: "Neck length",
+          labelLotNumber: "Lot number",
+          labelSerialNumber: "Serial number",
+          labelUdi: "UDI (Unique Device Identification)",
+          hintUdi: "Example format: (01)<GTIN>(17)<YYMMDD expiry>(10)<lot> – enter as it appears on the label.",
+          labelNarrative: "Event description",
+          hintNarrative: "Describe what happened, when it occurred, findings, patient outcome and any actions taken.",
+          submitButtonText: "Submit report",
+          contactBlock: "<strong>Direct contact:</strong> For urgent matters, please use your usual HipOn contact route or the vigilance contact information supplied in the product documentation.",
