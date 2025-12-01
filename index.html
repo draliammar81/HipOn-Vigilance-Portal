@@ -1,24 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Botpress Webchat -->
-  <script src="https://cdn.botpress.cloud/webchat/v3.3/inject.js"></script>
-  <script src="https://files.bpcontent.cloud/2025/11/05/15/20251105150803-DSRC8PF2.js" defer></script>
-
   <meta charset="UTF-8" />
-  <title>HipOn Vigilance Portal – Safety Events Reporting</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+  <title>HipOn Vigilance Portal</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root {
-      --blue-deep: #031024;
-      --blue-mid: #053c71;
-      --blue-soft: #0b70b8;
-      --blue-accent: #1ea5ff;
-      --blue-accent-soft: #37c0ff;
-      --text-main: #f7fbff;
-      --text-muted: #a9bed9;
-      --border-subtle: rgba(255, 255, 255, 0.08);
+      --bg: #020b1a;
+      --card: #061529;
+      --accent: #39a9ff;
+      --accent-soft: rgba(57,169,255,0.15);
+      --text: #f5f9ff;
+      --muted: #a9bedf;
+      --error: #ff6b6b;
+      --border: #102544;
+      --radius: 16px;
     }
 
     * {
@@ -29,988 +25,425 @@
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         sans-serif;
-      background:
-        radial-gradient(circle at top left, #0a4b88, transparent 55%),
-        radial-gradient(circle at top right, #0b70b8, transparent 55%),
-        radial-gradient(circle at bottom, #021731, transparent 55%),
-        linear-gradient(160deg, var(--blue-deep), #020712 60%, #000000);
-      color: var(--text-main);
+      background: radial-gradient(circle at top, #06255a 0, #020b1a 45%, #000 100%);
+      color: var(--text);
       min-height: 100vh;
-    }
-
-    a {
-      color: var(--blue-accent-soft);
-    }
-
-    .page {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1.5rem 1.5rem 3rem;
-    }
-
-    .header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.5rem;
-      margin-bottom: 1.5rem;
-      background: rgba(1, 10, 30, 0.75);
-      border-radius: 1rem;
-      border: 1px solid var(--border-subtle);
-      backdrop-filter: blur(10px);
+      justify-content: center;
+      padding: 24px;
     }
 
-    .brand {
+    .shell {
+      width: 100%;
+      max-width: 980px;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #061529 0, #030b18 55%, #020610 100%);
+      border-radius: 24px;
+      padding: 28px 24px 24px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(119, 179, 255, 0.18);
+      backdrop-filter: blur(16px);
+    }
+
+    header {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
-    .brand img {
-      height: 64px;
-      width: auto;
+    header img.logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: contain;
+      background: radial-gradient(circle at top, #fff 0, #d7e6ff 55%, #99b8ff 100%);
+      padding: 4px;
     }
 
-    .brand-title {
-      display: flex;
-      flex-direction: column;
+    header .titles {
+      flex: 1;
     }
 
-    .brand-title h1 {
+    header h1 {
       margin: 0;
       font-size: 1.5rem;
       letter-spacing: 0.03em;
     }
 
-    .brand-title span {
-      font-size: 0.85rem;
-      color: var(--text-muted);
+    header p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: var(--muted);
     }
 
-    .lang-switcher {
-      display: flex;
-      gap: 0.4rem;
-      align-items: center;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .lang-switcher button {
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: rgba(4, 21, 47, 0.9);
-      color: var(--text-main);
-      padding: 0.2rem 0.6rem;
-      cursor: pointer;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-    }
-
-    .lang-switcher button.active {
-      border-color: var(--blue-accent-soft);
-      background: linear-gradient(135deg, var(--blue-accent), var(--blue-accent-soft));
-    }
-
-    .devices {
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 20px;
     }
 
-    .device-card {
-      background: linear-gradient(135deg, rgba(5, 60, 120, 0.95), #020d24);
-      border-radius: 1.25rem;
-      border: 1px solid var(--border-subtle);
-      overflow: hidden;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
-    }
-
-    .device-card img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    .device-card h2 {
-      margin: 0.75rem 1.25rem 1.25rem;
-      font-size: 1.1rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .mission-card {
-      margin-bottom: 2rem;
-      background: rgba(0, 8, 26, 0.8);
-      border-radius: 1.25rem;
-      border: 1px solid var(--border-subtle);
-      padding: 1.5rem 1.75rem;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    .mission-card h2 {
-      margin-top: 0;
-      margin-bottom: 0.75rem;
-      font-size: 1.15rem;
-    }
-
-    .mission-card p {
-      margin: 0.25rem 0;
-      color: var(--text-muted);
-      line-height: 1.5;
-      font-size: 0.95rem;
-    }
-
-    .content-columns {
-      display: grid;
-      grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.4fr);
-      gap: 1.5rem;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 900px) {
-      .content-columns {
+    @media (max-width: 880px) {
+      .grid {
         grid-template-columns: minmax(0, 1fr);
       }
     }
 
-    .card {
-      background: rgba(0, 5, 20, 0.8);
-      border-radius: 1.25rem;
-      border: 1px solid var(--border-subtle);
-      padding: 1.75rem 1.75rem 2rem;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+    .form-card {
+      background: radial-gradient(circle at top left, #132d55 0, #050d1b 60%);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 18px 16px 16px;
     }
 
-    .card h2 {
-      margin-top: 0;
-      margin-bottom: 0.75rem;
-      font-size: 1.25rem;
-    }
-
-    .card p {
-      margin-top: 0;
-      margin-bottom: 1rem;
-      color: var(--text-muted);
+    .section-title {
       font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 8px;
     }
 
-    form {
+    .form-row {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem 1.25rem;
+      gap: 12px;
     }
 
-    @media (max-width: 700px) {
-      form {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .field.full-width {
-      grid-column: 1 / -1;
+    .form-row.full {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     label {
-      font-size: 0.9rem;
-      color: var(--text-muted);
+      display: block;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+      color: var(--muted);
     }
 
-    input,
-    select,
-    textarea {
-      border-radius: 0.7rem;
-      border: 1px solid var(--border-subtle);
-      background: #04152f;
-      color: #f7fbff;
-      padding: 0.55rem 0.7rem;
-      font: inherit;
+    .required::after {
+      content: ' *';
+      color: var(--error);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 9px;
+      border-radius: 10px;
+      border: 1px solid rgba(126, 160, 212, 0.6);
+      background: rgba(3, 13, 32, 0.95);
+      color: var(--text);
+      font-size: 0.85rem;
       outline: none;
     }
 
     input:focus,
     select:focus,
     textarea:focus {
-      border-color: var(--blue-accent);
-      box-shadow: 0 0 0 1px rgba(55, 192, 255, 0.4);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(57, 169, 255, 0.4);
     }
 
     textarea {
-      min-height: 120px;
+      min-height: 110px;
       resize: vertical;
     }
 
     .hint {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 2px;
     }
 
-    button[type="submit"] {
-      margin-top: 0.5rem;
-      grid-column: 1 / -1;
+    .actions {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button {
       border-radius: 999px;
       border: none;
-      padding: 0.8rem 1.5rem;
+      padding: 8px 16px;
+      font-size: 0.9rem;
       font-weight: 600;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      background: linear-gradient(135deg, var(--blue-accent), var(--blue-accent-soft));
-      color: #ffffff;
       cursor: pointer;
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
-      transition: transform 0.15s ease, box-shadow 0.15s ease,
-        filter 0.15s ease;
+      background: linear-gradient(135deg, #39a9ff, #70e4ff);
+      color: #001427;
+      box-shadow: 0 10px 30px rgba(0, 155, 255, 0.4);
     }
 
-    button[type="submit"]:hover {
-      filter: brightness(1.06);
-      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.7);
-      transform: translateY(-1px);
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+      box-shadow: none;
     }
 
-    button[type="submit"]:active {
-      transform: translateY(1px);
-      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.6);
+    .status {
+      font-size: 0.8rem;
+      color: var(--muted);
     }
 
-    .contact-block {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px dashed var(--border-subtle);
-      font-size: 0.9rem;
-      color: var(--text-muted);
+    .status.ok {
+      color: #5ae08c;
+    }
+
+    .status.err {
+      color: var(--error);
+    }
+
+    .right-panel {
+      background: radial-gradient(circle at top, #102b55 0, #050e21 60%);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 16px 16px 14px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      align-items: baseline;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .contact-block strong {
-      color: var(--text-main);
+    .device-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+    }
+
+    .device-badge span {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .device-images {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .device-images img {
+      flex: 1;
+      border-radius: 14px;
+      border: 1px solid rgba(126,160,212,0.55);
+      background: #020814;
+      object-fit: cover;
+      max-height: 140px;
+    }
+
+    .panel-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .highlight {
+      color: var(--accent);
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
-  <!-- hidden iframe so submissions don't navigate away -->
-  <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-
-  <div class="page">
-    <!-- HEADER WITH LOGO + LANGUAGE SWITCHER -->
-    <header class="header">
-      <div class="brand">
-        <img src="Logo.png" alt="HipOn logo" />
-        <div class="brand-title">
-          <h1 data-i18n="title_main">HipOn Vigilance Portal</h1>
-          <span data-i18n="title_sub">CERAMO &amp; POLYMO – Safety Events Reporting</span>
-        </div>
-      </div>
-
-      <div class="lang-switcher">
-        <span data-i18n="lang_label">Language:</span>
-        <button type="button" class="lang-button active" data-lang="en">EN</button>
-        <button type="button" class="lang-button" data-lang="fr">FR</button>
-        <button type="button" class="lang-button" data-lang="es">ES</button>
-        <button type="button" class="lang-button" data-lang="pt">PT</button>
-        <button type="button" class="lang-button" data-lang="de">DE</button>
-        <button type="button" class="lang-button" data-lang="it">IT</button>
+<div class="shell">
+  <div class="card">
+    <header>
+      <img src="Logo.png" alt="HipOn logo" class="logo">
+      <div class="titles">
+        <h1>HipOn Vigilance Portal</h1>
+        <p>Secure reporting of suspected adverse events related to HipOn Ceramo &amp; Polymo systems.</p>
       </div>
     </header>
 
-    <!-- DEVICE IMAGES -->
-    <section class="devices">
-      <article class="device-card">
-        <img src="devices ceramo.png" alt="CERAMO device" />
-        <h2>CERAMO System</h2>
-      </article>
-      <article class="device-card">
-        <img src="devices polymo.png" alt="POLYMO device" />
-        <h2>POLYMO System</h2>
-      </article>
-    </section>
+    <div class="grid">
+      <div class="form-card">
+        <div class="section-title">Report a safety event</div>
 
-    <!-- MISSION & VISION -->
-    <section class="mission-card">
-      <h2 data-i18n="mission_title">HipOn Mission &amp; Vision</h2>
-      <p data-i18n="mission_p1">
-        HipON is committed to evidence-based performance and uncompromising quality in Total Hip Replacement,
-        building on a longstanding history of collaboration with leading European centers.
-      </p>
-      <p data-i18n="mission_p2">
-        This portal has been created with a single purpose: patient safety, which we consider the cornerstone of
-        everything we do. Its aim is to enable rapid, compliant, and accurate analysis of any safety event in which
-        our CERAMO or POLYMO systems were used.
-      </p>
-      <p data-i18n="mission_p3">
-        A dedicated team of clinical, engineering, and vigilance specialists works around the clock to deliver
-        world-class case reviews, always putting the interests of patients and surgeons first.
-      </p>
-    </section>
+        <!-- HIDDEN IFRAME TO CATCH THE FORM RESPONSE -->
+        <iframe name="hipon_hidden_iframe" style="display:none;" id="hipon_hidden_iframe"></iframe>
 
-    <section class="content-columns">
-      <!-- LEFT: submission form -->
-      <section class="card">
-        <h2 data-i18n="form_title">Submit a Safety Event</h2>
-        <p data-i18n="form_intro">
-          Please complete the form below to report any incident, complaint or safety concern related to HipOn
-          CERAMO or POLYMO systems.
-        </p>
+        <form id="hiponForm"
+              action="YOUR_WEB_APP_URL_HERE"
+              method="POST"
+              target="hipon_hidden_iframe">
 
-        <form
-          id="complaintForm"
-          method="POST"
-          action="https://script.google.com/macros/s/AKfycbz58IugfpxNcA6F5X5tWSUObkKYt6P02J773661RzDYlAV0aEKwzOfFPBlzpGRGeySy9w/exec"
-          target="hidden_iframe"
-        >
           <!-- Reporter details -->
-          <div class="field">
-            <label for="hcpName" data-i18n="label_hcpName">Reporter name</label>
-            <input id="hcpName" name="hcpName" type="text" required />
+          <div class="form-row">
+            <div>
+              <label class="required">Reporter name</label>
+              <input type="text" name="hcpName" required />
+            </div>
+            <div>
+              <label class="required">Role</label>
+              <input type="text" name="role" required />
+            </div>
           </div>
-
-          <div class="field">
-            <label for="role" data-i18n="label_role">Role</label>
-            <select id="role" name="role" required>
-              <option value="">Select role…</option>
-            </select>
+          <div class="form-row">
+            <div>
+              <label class="required">Hospital / facility</label>
+              <input type="text" name="facility" required />
+            </div>
+            <div>
+              <label class="required">Country</label>
+              <input type="text" name="country" required />
+            </div>
           </div>
-
-          <div class="field">
-            <label for="facility" data-i18n="label_facility">Hospital / facility</label>
-            <input id="facility" name="facility" type="text" required />
+          <div class="form-row">
+            <div>
+              <label>City</label>
+              <input type="text" name="city" />
+            </div>
+            <div>
+              <label>Email</label>
+              <input type="email" name="email" />
+            </div>
           </div>
-
-          <div class="field">
-            <label for="country" data-i18n="label_country">Country</label>
-            <select id="country" name="country" required>
-              <option value="">Select country…</option>
-            </select>
-          </div>
-
-          <!-- CITY AS FREE TEXT -->
-          <div class="field">
-            <label for="city" data-i18n="label_city">City</label>
-            <input id="city" name="city" type="text" />
-          </div>
-
-          <div class="field">
-            <label for="email" data-i18n="label_email">Email</label>
-            <input id="email" name="email" type="email" required />
-          </div>
-
-          <div class="field">
-            <label for="phone" data-i18n="label_phone">Phone</label>
-            <input id="phone" name="phone" type="tel" required />
+          <div class="form-row">
+            <div>
+              <label>Phone</label>
+              <input type="tel" name="phone" />
+            </div>
           </div>
 
           <!-- Dates -->
-          <div class="field">
-            <label for="eventDate" data-i18n="label_eventDate">Event date</label>
-            <input id="eventDate" name="eventDate" type="date" required />
-          </div>
-
-          <div class="field">
-            <label for="reportDate" data-i18n="label_reportDate">Date of report (case creation)</label>
-            <input id="reportDate" name="reportDate" type="date" />
-            <div class="hint" data-i18n="hint_reportDate">
-              Used together with the event date to improve analysis of reporting timelines.
+          <div class="section-title" style="margin-top:14px;">Dates</div>
+          <div class="form-row">
+            <div>
+              <label class="required">Event date</label>
+              <input type="date" name="eventDate" required />
+            </div>
+            <div>
+              <label class="required">Report date</label>
+              <input type="date" name="reportDate" required />
             </div>
           </div>
 
           <!-- Device info -->
-          <div class="field">
-            <label for="deviceSystem" data-i18n="label_deviceSystem">Device system</label>
-            <select id="deviceSystem" name="deviceSystem" required>
-              <option value="">Select system…</option>
-              <option value="CERAMO">CERAMO</option>
-              <option value="POLYMO">POLYMO</option>
-            </select>
+          <div class="section-title" style="margin-top:14px;">Device details</div>
+          <div class="form-row">
+            <div>
+              <label class="required">Device system</label>
+              <select name="deviceSystem" required>
+                <option value="">Select...</option>
+                <option value="Ceramo">HipOn Ceramo</option>
+                <option value="Polymo">HipOn Polymo</option>
+              </select>
+            </div>
+            <div>
+              <label>Stem size</label>
+              <input type="text" name="stemSize" />
+            </div>
           </div>
-
-          <div class="field">
-            <label for="stemSize" data-i18n="label_stemSize">Stem size</label>
-            <select id="stemSize" name="stemSize">
-              <option value="">Select size…</option>
-            </select>
+          <div class="form-row">
+            <div>
+              <label>Cup size</label>
+              <input type="text" name="cupSize" />
+            </div>
+            <div>
+              <label>Head size</label>
+              <input type="text" name="headSize" />
+            </div>
           </div>
-
-          <div class="field">
-            <label for="cupSize" data-i18n="label_cupSize">Cup size</label>
-            <select id="cupSize" name="cupSize">
-              <option value="">Select size…</option>
-            </select>
+          <div class="form-row">
+            <div>
+              <label>Offset</label>
+              <input type="text" name="offsetOption" />
+            </div>
+            <div>
+              <label>Neck length</label>
+              <input type="text" name="neckLength" />
+            </div>
           </div>
-
-          <div class="field">
-            <label for="headSize" data-i18n="label_headSize">Head size</label>
-            <select id="headSize" name="headSize">
-              <option value="">Select size…</option>
-            </select>
+          <div class="form-row">
+            <div>
+              <label>Lot number</label>
+              <input type="text" name="lotNumber" />
+            </div>
+            <div>
+              <label>Serial number</label>
+              <input type="text" name="serialNumber" />
+            </div>
           </div>
-
-          <div class="field">
-            <label for="offsetOption" data-i18n="label_offsetOption">Offset</label>
-            <select id="offsetOption" name="offsetOption">
-              <option value="">Select option…</option>
-              <option value="Normal">Normal</option>
-              <option value="High">High</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="neckLength" data-i18n="label_neckLength">Neck length</label>
-            <select id="neckLength" name="neckLength">
-              <option value="">Select length…</option>
-              <option value="S">S</option>
-              <option value="M">M</option>
-              <option value="L">L</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="lotNumber" data-i18n="label_lotNumber">Lot number</label>
-            <input id="lotNumber" name="lotNumber" type="text" />
-          </div>
-
-          <div class="field">
-            <label for="serialNumber" data-i18n="label_serialNumber">Serial number</label>
-            <input id="serialNumber" name="serialNumber" type="text" />
-          </div>
-
-          <!-- UDI field -->
-          <div class="field full-width">
-            <label for="udi" data-i18n="label_udi">UDI (Unique Device Identification)</label>
-            <input
-              id="udi"
-              name="udi"
-              type="text"
-              placeholder="Example: (01)07612345678901(17)261231(10)LOT123456"
-              data-i18n-placeholder="placeholder_udi"
-            />
-            <div class="hint" data-i18n="hint_udi">
-              Example format: (01)&lt;GTIN&gt;(17)&lt;YYMMDD expiry&gt;(10)&lt;lot&gt; – enter as it appears on the label.
+          <div class="form-row">
+            <div>
+              <label>UDI</label>
+              <input type="text" name="udi" />
             </div>
           </div>
 
           <!-- Narrative -->
-          <div class="field full-width">
-            <label for="narrative" data-i18n="label_narrative">Event description</label>
-            <textarea id="narrative" name="narrative" required></textarea>
-            <div class="hint" data-i18n="hint_narrative">
-              Describe what happened, when it occurred, findings, patient outcome and any actions taken.
+          <div class="form-row full" style="margin-top:14px;">
+            <div>
+              <label class="required">Event description</label>
+              <textarea name="narrative" required></textarea>
+              <div class="hint">
+                Please describe what happened, clinical consequences, interventions, and device status if known.
+              </div>
             </div>
           </div>
 
-          <button type="submit" data-i18n="submit_button">Submit report</button>
+          <div class="actions">
+            <button type="submit" id="submitBtn">Submit report</button>
+            <span id="statusMsg" class="status"></span>
+          </div>
         </form>
+      </div>
 
-        <div id="formMessage" class="hint" style="margin-top:0.75rem;"></div>
-
-        <div class="contact-block">
-          <strong data-i18n="contact_heading">Direct contact:</strong>
-          <span data-i18n="contact_body">
-            For urgent matters, please use your usual HipOn contact route or the vigilance contact information
-            supplied in the product documentation.
-          </span>
+      <div class="right-panel">
+        <div class="device-badge">
+          <span></span>
+          HipOn Ceramo &amp; Polymo
         </div>
-      </section>
-
-      <!-- RIGHT: info about chat (actual widget handled by Botpress scripts in <head>) -->
-      <aside class="card">
-        <h2 data-i18n="chat_title">Chat &amp; Support</h2>
-        <p data-i18n="chat_intro">
-          For general questions about this portal you can use the chat widget available on this page.
-          Clinical or regulatory questions should be directed to your HipOn representative or local vigilance contact.
+        <div class="device-images">
+          <img src="devices ceramo.png" alt="Ceramo components" />
+          <img src="devices polymo.png" alt="Polymo components" />
+        </div>
+        <p class="panel-text">
+          This portal is dedicated to the <span class="highlight">HipOn</span> hip prosthesis systems.
+          Reports submitted here are routed to the safety team for assessment and signal detection.
         </p>
-      </aside>
-    </section>
+        <p class="panel-text">
+          Please include as much clinical and device information as available.
+          If you have attachments (X-rays, operative reports, etc.), the safety team will contact you securely.
+        </p>
+      </div>
+    </div>
   </div>
+</div>
 
-  <script>
-    (function () {
-      const scriptURL =
-        "https://script.google.com/macros/s/AKfycbz58IugfpxNcA6F5X5tWSUObkKYt6P02J773661RzDYlAV0aEKwzOfFPBlzpGRGeySy9w/exec";
+<script>
+  const form = document.getElementById('hiponForm');
+  const iframe = document.getElementById('hipon_hidden_iframe');
+  const statusMsg = document.getElementById('statusMsg');
+  const submitBtn = document.getElementById('submitBtn');
 
-      const countries = [
-        "Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic",
-        "Denmark","Estonia","Finland","France","Germany","Greece","Hungary",
-        "Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta",
-        "Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia",
-        "Spain","Sweden",
-        "Norway","Iceland","Liechtenstein",
-        "Switzerland","United Kingdom",
-        "Albania","Bosnia and Herzegovina","Serbia","North Macedonia",
-        "Montenegro","Kosovo","Moldova","Ukraine","Belarus",
-        "Andorra","Monaco","San Marino","Vatican City",
-        "Other Europe / EEA"
-      ];
+  function setStatus(message, type) {
+    statusMsg.textContent = message || '';
+    statusMsg.className = 'status ' + (type || '');
+  }
 
-      const roles = [
-        "Orthopedic Surgeon",
-        "OR Nurse",
-        "Scrub Nurse",
-        "Physiotherapist",
-        "Radiologist",
-        "Other HCP"
-      ];
+  iframe.addEventListener('load', function () {
+    // When Apps Script responds, this iframe loads
+    setStatus('Report submitted successfully.', 'ok');
+    submitBtn.disabled = false;
+    form.reset();
+  });
 
-      const stemSizes = ["#1", "#2", "#3", "#4", "#5", "#6", "#7", "#8"];
-      const cupSizes = [
-        "44 mm","46 mm","48 mm","50 mm","52 mm","54 mm",
-        "56 mm","58 mm","60 mm","62 mm"
-      ];
-      const headSizes = ["28 mm", "32 mm", "36 mm", "40 mm"];
-
-      // ---------- TRANSLATIONS ----------
-      const translations = {
-        en: {
-          lang_label: "Language:",
-          title_main: "HipOn Vigilance Portal",
-          title_sub: "CERAMO & POLYMO – Safety Events Reporting",
-          mission_title: "HipOn Mission & Vision",
-          mission_p1:
-            "HipON is committed to evidence-based performance and uncompromising quality in Total Hip Replacement, " +
-            "building on a longstanding history of collaboration with leading European centers.",
-          mission_p2:
-            "This portal has been created with a single purpose: patient safety, which we consider the cornerstone of " +
-            "everything we do. Its aim is to enable rapid, compliant, and accurate analysis of any safety event in which " +
-            "our CERAMO or POLYMO systems were used.",
-          mission_p3:
-            "A dedicated team of clinical, engineering, and vigilance specialists works around the clock to deliver " +
-            "world-class case reviews, always putting the interests of patients and surgeons first.",
-          form_title: "Submit a Safety Event",
-          form_intro:
-            "Please complete the form below to report any incident, complaint or safety concern related to HipOn " +
-            "CERAMO or POLYMO systems.",
-          label_hcpName: "Reporter name",
-          label_role: "Role",
-          label_facility: "Hospital / facility",
-          label_country: "Country",
-          label_city: "City",
-          label_email: "Email",
-          label_phone: "Phone",
-          label_eventDate: "Event date",
-          label_reportDate: "Date of report (case creation)",
-          hint_reportDate:
-            "Used together with the event date to improve analysis of reporting timelines.",
-          label_deviceSystem: "Device system",
-          label_stemSize: "Stem size",
-          label_cupSize: "Cup size",
-          label_headSize: "Head size",
-          label_offsetOption: "Offset",
-          label_neckLength: "Neck length",
-          label_lotNumber: "Lot number",
-          label_serialNumber: "Serial number",
-          label_udi: "UDI (Unique Device Identification)",
-          placeholder_udi: "Example: (01)07612345678901(17)261231(10)LOT123456",
-          hint_udi:
-            "Example format: (01)<GTIN>(17)<YYMMDD expiry>(10)<lot> – enter as it appears on the label.",
-          label_narrative: "Event description",
-          hint_narrative:
-            "Describe what happened, when it occurred, findings, patient outcome and any actions taken.",
-          submit_button: "Submit report",
-          contact_heading: "Direct contact:",
-          contact_body:
-            "For urgent matters, please use your usual HipOn contact route or the vigilance contact information " +
-            "supplied in the product documentation.",
-          chat_title: "Chat & Support",
-          chat_intro:
-            "For general questions about this portal you can use the chat widget available on this page. " +
-            "Clinical or regulatory questions should be directed to your HipOn representative or local vigilance contact.",
-          submitting_message: "Submitting… please wait.",
-          success_message: "Thank you. Your safety event report has been submitted. You can submit another report below.",
-          error_message: "There was an issue submitting the report. Please try again."
-        },
-        fr: {
-          lang_label: "Langue :",
-          title_main: "Portail de vigilance HipOn",
-          title_sub: "CERAMO & POLYMO – Déclaration des événements de sécurité",
-          mission_title: "Mission et vision de HipOn",
-          mission_p1:
-            "HipON s’engage pour une performance fondée sur les preuves et une qualité irréprochable en prothèse totale de hanche, " +
-            "en s’appuyant sur une longue histoire de collaboration avec des centres européens de référence.",
-          mission_p2:
-            "Ce portail a été créé avec un seul objectif : la sécurité des patients, que nous considérons comme la pierre angulaire " +
-            "de tout ce que nous faisons. Son but est de permettre une analyse rapide, conforme et précise de tout événement de sécurité " +
-            "impliquant nos systèmes CERAMO ou POLYMO.",
-          mission_p3:
-            "Une équipe dédiée de spécialistes cliniques, d’ingénieurs et d’experts en vigilance travaille en continu pour fournir " +
-            "des revues de cas de premier niveau, en plaçant toujours les intérêts des patients et des chirurgiens au premier plan.",
-          form_title: "Déclarer un événement de sécurité",
-          form_intro:
-            "Veuillez compléter le formulaire ci-dessous pour signaler tout incident, plainte ou préoccupation de sécurité lié aux systèmes HipOn CERAMO ou POLYMO.",
-          label_hcpName: "Nom du déclarant",
-          label_role: "Rôle",
-          label_facility: "Hôpital / établissement",
-          label_country: "Pays",
-          label_city: "Ville",
-          label_email: "E-mail",
-          label_phone: "Téléphone",
-          label_eventDate: "Date de l’événement",
-          label_reportDate: "Date de déclaration (création du cas)",
-          hint_reportDate:
-            "Utilisée avec la date de l’événement pour analyser les délais de déclaration.",
-          label_deviceSystem: "Système implanté",
-          label_stemSize: "Taille de la tige",
-          label_cupSize: "Taille de la cupule",
-          label_headSize: "Taille de la tête",
-          label_offsetOption: "Offset",
-          label_neckLength: "Longueur du col",
-          label_lotNumber: "Numéro de lot",
-          label_serialNumber: "Numéro de série",
-          label_udi: "UDI (Identification unique du dispositif)",
-          placeholder_udi: "Exemple : (01)07612345678901(17)261231(10)LOT123456",
-          hint_udi:
-            "Format type : (01)<GTIN>(17)<YYMMDD d’expiration>(10)<lot> – recopiez l’UDI telle qu’elle figure sur l’étiquette.",
-          label_narrative: "Description de l’événement",
-          hint_narrative:
-            "Décrivez ce qui s’est passé, la chronologie, les résultats cliniques et les actions entreprises.",
-          submit_button: "Envoyer le rapport",
-          contact_heading: "Contact direct :",
-          contact_body:
-            "Pour les situations urgentes, veuillez utiliser vos canaux de contact habituels avec HipOn ou les coordonnées de vigilance indiquées dans la documentation produit.",
-          chat_title: "Chat & support",
-          chat_intro:
-            "Pour des questions générales concernant ce portail, vous pouvez utiliser le widget de chat disponible sur cette page. " +
-            "Les questions cliniques ou réglementaires doivent être adressées à votre représentant HipOn ou au contact local de vigilance.",
-          submitting_message: "Envoi en cours… veuillez patienter.",
-          success_message: "Merci. Votre déclaration d’événement de sécurité a été enregistrée. Vous pouvez soumettre un autre cas ci-dessous.",
-          error_message: "Un problème est survenu lors de l’envoi. Veuillez réessayer."
-        },
-        es: {
-          lang_label: "Idioma:",
-          title_main: "Portal de Vigilancia HipOn",
-          title_sub: "CERAMO y POLYMO – Notificación de eventos de seguridad",
-          mission_title: "Misión y visión de HipOn",
-          mission_p1:
-            "HipON está comprometido con el rendimiento basado en la evidencia y la máxima calidad en la artroplastia total de cadera, " +
-            "apoyándose en una larga trayectoria de colaboración con centros líderes en Europa.",
-          mission_p2:
-            "Este portal se ha creado con un único propósito: la seguridad del paciente, que consideramos la piedra angular de todo lo que hacemos. " +
-            "Su objetivo es permitir un análisis rápido, conforme y preciso de cualquier evento de seguridad en el que se hayan utilizado nuestros sistemas CERAMO o POLYMO.",
-          mission_p3:
-            "Un equipo dedicado de especialistas clínicos, de ingeniería y de vigilancia trabaja de forma continua para ofrecer revisiones de casos de primer nivel, " +
-            "poniendo siempre en primer lugar los intereses de los pacientes y los cirujanos.",
-          form_title: "Notificar un evento de seguridad",
-          form_intro:
-            "Complete el siguiente formulario para notificar cualquier incidente, reclamación o preocupación de seguridad relacionada con los sistemas HipOn CERAMO o POLYMO.",
-          label_hcpName: "Nombre del informante",
-          label_role: "Rol",
-          label_facility: "Hospital / centro",
-          label_country: "País",
-          label_city: "Ciudad",
-          label_email: "Correo electrónico",
-          label_phone: "Teléfono",
-          label_eventDate: "Fecha del evento",
-          label_reportDate: "Fecha de la notificación (creación del caso)",
-          hint_reportDate:
-            "Se utiliza junto con la fecha del evento para analizar los plazos de notificación.",
-          label_deviceSystem: "Sistema implantado",
-          label_stemSize: "Tamaño del vástago",
-          label_cupSize: "Tamaño del cotilo",
-          label_headSize: "Tamaño de la cabeza",
-          label_offsetOption: "Offset",
-          label_neckLength: "Longitud del cuello",
-          label_lotNumber: "Número de lote",
-          label_serialNumber: "Número de serie",
-          label_udi: "UDI (Identificación única del dispositivo)",
-          placeholder_udi: "Ejemplo: (01)07612345678901(17)261231(10)LOT123456",
-          hint_udi:
-            "Formato de ejemplo: (01)<GTIN>(17)<YYMMDD de caducidad>(10)<lote>. Introduzca el UDI tal y como aparece en la etiqueta.",
-          label_narrative: "Descripción del evento",
-          hint_narrative:
-            "Describa lo ocurrido, la cronología, los hallazgos, la evolución clínica y las acciones realizadas.",
-          submit_button: "Enviar informe",
-          contact_heading: "Contacto directo:",
-          contact_body:
-            "Para asuntos urgentes, utilice sus canales habituales de contacto con HipOn o los datos de vigilancia facilitados en la documentación del producto.",
-          chat_title: "Chat y soporte",
-          chat_intro:
-            "Para preguntas generales sobre este portal, puede utilizar el widget de chat disponible en esta página. " +
-            "Las cuestiones clínicas o regulatorias deben dirigirse a su representante de HipOn o al contacto local de vigilancia.",
-          submitting_message: "Enviando… por favor, espere.",
-          success_message: "Gracias. Su informe de evento de seguridad se ha enviado. Puede notificar otro caso a continuación.",
-          error_message: "Se ha producido un problema al enviar el informe. Inténtelo de nuevo."
-        },
-        pt: {
-          lang_label: "Idioma:",
-          title_main: "Portal de Vigilância HipOn",
-          title_sub: "CERAMO e POLYMO – Notificação de eventos de segurança",
-          mission_title: "Missão e visão da HipOn",
-          mission_p1:
-            "A HipON é comprometida com o desempenho baseado em evidências e com a qualidade irrepreensível na artroplastia total da anca, " +
-            "assente numa longa história de colaboração com centros de referência na Europa.",
-          mission_p2:
-            "Este portal foi criado com um único objetivo: a segurança do doente, que consideramos a pedra angular de tudo o que fazemos. " +
-            "O seu propósito é permitir uma análise rápida, conforme e precisa de qualquer evento de segurança em que os nossos sistemas CERAMO ou POLYMO tenham sido utilizados.",
-          mission_p3:
-            "Uma equipa dedicada de especialistas clínicos, de engenharia e de vigilância trabalha 24/7 para fornecer análises de casos de nível internacional, " +
-            "colocando sempre em primeiro lugar os interesses dos doentes e dos cirurgiões.",
-          form_title: "Notificar um evento de segurança",
-          form_intro:
-            "Preencha o formulário abaixo para notificar qualquer incidente, queixa ou preocupação de segurança relacionada com os sistemas HipOn CERAMO ou POLYMO.",
-          label_hcpName: "Nome do notificador",
-          label_role: "Função",
-          label_facility: "Hospital / instituição",
-          label_country: "País",
-          label_city: "Cidade",
-          label_email: "E-mail",
-          label_phone: "Telefone",
-          label_eventDate: "Data do evento",
-          label_reportDate: "Data da notificação (criação do caso)",
-          hint_reportDate:
-            "Utilizada juntamente com a data do evento para analisar os prazos de notificação.",
-          label_deviceSystem: "Sistema implantado",
-          label_stemSize: "Tamanho da haste",
-          label_cupSize: "Tamanho do acetábulo",
-          label_headSize: "Tamanho da cabeça",
-          label_offsetOption: "Offset",
-          label_neckLength: "Comprimento do colo",
-          label_lotNumber: "Número de lote",
-          label_serialNumber: "Número de série",
-          label_udi: "UDI (Identificação única do dispositivo)",
-          placeholder_udi: "Exemplo: (01)07612345678901(17)261231(10)LOT123456",
-          hint_udi:
-            "Formato de exemplo: (01)<GTIN>(17)<YYMMDD validade>(10)<lote> – introduza o UDI tal como consta no rótulo.",
-          label_narrative: "Descrição do evento",
-          hint_narrative:
-            "Descreva o que aconteceu, a cronologia, os achados, a evolução clínica e as ações realizadas.",
-          submit_button: "Enviar relatório",
-          contact_heading: "Contacto direto:",
-          contact_body:
-            "Para situações urgentes, utilize os seus canais habituais de contacto com a HipOn ou os contactos de vigilância indicados na documentação do produto.",
-          chat_title: "Chat e suporte",
-          chat_intro:
-            "Para questões gerais sobre este portal, utilize o widget de chat disponível nesta página. " +
-            "Questões clínicas ou regulamentares devem ser dirigidas ao seu representante HipOn ou ao contacto local de vigilância.",
-          submitting_message: "A enviar… por favor, aguarde.",
-          success_message: "Obrigado. O seu relatório de evento de segurança foi enviado. Pode submeter outro caso abaixo.",
-          error_message: "Ocorreu um problema ao enviar o relatório. Tente novamente."
-        },
-        de: {
-          lang_label: "Sprache:",
-          title_main: "HipOn Vigilanzportal",
-          title_sub: "CERAMO & POLYMO – Meldung von Sicherheitsereignissen",
-          mission_title: "Mission und Vision von HipOn",
-          mission_p1:
-            "HipON verpflichtet sich zu evidenzbasierter Leistung und kompromissloser Qualität in der Totalendoprothetik der Hüfte " +
-            "und baut auf einer langjährigen Zusammenarbeit mit führenden europäischen Zentren auf.",
-          mission_p2:
-            "Dieses Portal wurde mit einem einzigen Ziel geschaffen: der Patientensicherheit, die wir als Eckpfeiler unseres Handelns verstehen. " +
-            "Es soll eine schnelle, regelkonforme und präzise Analyse aller Sicherheitsereignisse ermöglichen, bei denen unsere CERAMO- oder POLYMO-Systeme verwendet wurden.",
-          mission_p3:
-            "Ein engagiertes Team aus Klinikern, Ingenieuren und Vigilanzspezialisten arbeitet rund um die Uhr, um Fallanalysen auf höchstem Niveau zu liefern " +
-            "und dabei stets die Interessen von Patienten und Operateuren in den Mittelpunkt zu stellen.",
-          form_title: "Sicherheitsereignis melden",
-          form_intro:
-            "Bitte füllen Sie das folgende Formular aus, um Vorfälle, Beschwerden oder Sicherheitsbedenken im Zusammenhang mit HipOn CERAMO- oder POLYMO-Systemen zu melden.",
-          label_hcpName: "Name des Melders",
-          label_role: "Funktion",
-          label_facility: "Krankenhaus / Einrichtung",
-          label_country: "Land",
-          label_city: "Stadt",
-          label_email: "E-Mail",
-          label_phone: "Telefon",
-          label_eventDate: "Datum des Ereignisses",
-          label_reportDate: "Datum der Meldung (Falldatum)",
-          hint_reportDate:
-            "Wird zusammen mit dem Ereignisdatum zur Analyse der Meldezeiten verwendet.",
-          label_deviceSystem: "Implantiertes System",
-          label_stemSize: "Schaftgröße",
-          label_cupSize: "Pfannengröße",
-          label_headSize: "Kopfgröße",
-          label_offsetOption: "Offset",
-          label_neckLength: "Halshöhe",
-          label_lotNumber: "Chargennummer",
-          label_serialNumber: "Seriennummer",
-          label_udi: "UDI (Eindeutige Gerätekennung)",
-          placeholder_udi: "Beispiel: (01)07612345678901(17)261231(10)LOT123456",
-          hint_udi:
-            "Beispielformat: (01)<GTIN>(17)<YYMMDD Verfall>(10)<Charge> – geben Sie die UDI so ein, wie sie auf dem Label steht.",
-          label_narrative: "Ereignisbeschreibung",
-          hint_narrative:
-            "Beschreiben Sie den Hergang, die zeitliche Abfolge, Befunde, den klinischen Verlauf und ergriffene Maßnahmen.",
-          submit_button: "Meldung absenden",
-          contact_heading: "Direkter Kontakt:",
-          contact_body:
-            "Für dringende Anliegen nutzen Sie bitte Ihre üblichen HipOn-Kontaktwege oder die in der Produktdokumentation angegebenen Vigilanzkontakte.",
-          chat_title: "Chat & Support",
-          chat_intro:
-            "Für allgemeine Fragen zu diesem Portal können Sie das Chat-Widget auf dieser Seite verwenden. " +
-            "Klinische oder regulatorische Fragen richten Sie bitte an Ihren HipOn-Ansprechpartner oder den lokalen Vigilanzkontakt.",
-          submitting_message: "Wird gesendet… bitte warten.",
-          success_message: "Vielen Dank. Ihre Meldung eines Sicherheitsereignisses wurde übermittelt. Sie können unten einen weiteren Fall melden.",
-          error_message: "Beim Senden der Meldung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
-        },
-        it: {
-          lang_label: "Lingua:",
-          title_main: "Portale di Vigilanza HipOn",
-          title_sub: "CERAMO e POLYMO – Segnalazione di eventi di sicurezza",
-          mission_title: "Missione e visione di HipOn",
-          mission_p1:
-            "HipON è impegnata in prestazioni basate sull’evidenza e in una qualità senza compromessi nella protesi totale d’anca, " +
-            "forte di una lunga storia di collaborazione con i principali centri europei.",
-          mission_p2:
-            "Questo portale è stato creato con un unico scopo: la sicurezza del paziente, che consideriamo la pietra angolare di tutto ciò che facciamo. " +
-            "Il suo obiettivo è consentire un’analisi rapida, conforme e accurata di qualsiasi evento di sicurezza in cui siano stati utilizzati i nostri sistemi CERAMO o POLYMO.",
-          mission_p3:
-            "Un team dedicato di specialisti clinici, ingegneri e responsabili di vigilanza lavora senza interruzione per fornire revisioni dei casi di livello internazionale, " +
-            "mettendo sempre al primo posto gli interessi dei pazienti e dei chirurghi.",
-          form_title: "Segnala un evento di sicurezza",
-          form_intro:
-            "Compila il modulo seguente per segnalare qualsiasi incidente, reclamo o problema di sicurezza relativo ai sistemi HipOn CERAMO o POLYMO.",
-          label_hcpName: "Nome del segnalatore",
-          label_role: "Ruolo",
-          label_facility: "Ospedale / struttura",
-          label_country: "Paese",
-          label_city: "Città",
-          label_email: "E-mail",
-          label_phone: "Telefono",
-          label_eventDate: "Data dell’evento",
-          label_reportDate: "Data della segnalazione (creazione del caso)",
-          hint_reportDate:
-            "Utilizzata insieme alla data dell’evento per analizzare i tempi di segnalazione.",
-          label_deviceSystem: "Sistema impiantato",
-          label_stemSize: "Misura dello stelo",
-          label_cupSize: "Misura della coppa",
-          label_headSize: "Misura della testa",
-          label_offsetOption: "Offset",
-          label_neckLength: "Lunghezza del collo",
-          label_lotNumber: "Numero di lotto",
-          label_serialNumber: "Numero di serie",
-          label_udi: "UDI (Identificazione univoca del dispositivo)",
-          placeholder_udi: "Esempio: (01)07612345678901(17)261231(10)LOT123456",
-          hint_udi:
-            "Formato di esempio: (01)<GTIN>(17)<YYMMDD scadenza>(10)<lotto> – inserisci l’UDI esattamente come riportata sull’etichetta.",
-          label_narrative: "Descrizione dell’evento",
-          hint_narrative:
-            "Descrivi quanto accaduto, la tempistica, i reperti, l’evoluzione clinica e le azioni intraprese.",
-          submit_button: "Invia segnalazione",
-          contact_heading: "Contatto diretto:",
-          contact_body:
-            "Per questioni urgenti, utilizza i tuoi consueti canali di contatto con HipOn o i riferimenti di vigilanza indicati nella documentazione del prodotto.",
-          chat_title: "Chat e supporto",
-          chat_intro:
-            "Per domande generali su questo portale puoi utilizzare il widget di chat disponibile in questa pagina. " +
-            "Le questioni cliniche o regolatorie devono essere indirizzate al tuo referente HipOn o al contatto locale di vigilanza.",
-          submitting_message: "Invio in corso… attendere prego.",
-          success_message: "Grazie. La tua segnalazione di evento di sicurezza è stata inviata. Puoi inserire un’altra segnalazione qui sotto.",
-          error_message: "Si è verificato un problema durante l’invio. Riprova."
-        }
-      };
-
-      let currentLang = "en";
-
-      function applyTranslations() {
-        const dict = translations[currentLang] || translations.en;
-
-        document.documentElement.lang = currentLang;
-
-        document.querySelectorAll("[data-i18n]").forEach((el) => {
-          const key = el.getAttribute("data-i18n");
-          if (dict[key] !== undefined) {
-            el.textContent = dict[key];
-          }
-        });
-
-        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
-          const key = el.getAttribute("data-i18n-placeholder");
-          if (dict[key] !== undefined) {
-            el.placeholder = dict[key];
-          }
-        });
-      }
-
-      function populateSelect(id, options) {
-        const select = document.getElementById(id);
-        if (!select) return;
-        options.forEach((val) => {
-          const opt = document.createElement("option");
-          opt.value = val;
-          opt.textContent = val;
-          select.appendChild(opt);
-        });
-      }
-
-      function setTodayReportDate() {
-        const reportDateInput = document.getElementById("reportDate");
-        if (reportDateInput && !reportDateInput.value) {
-          const today = new Date();
-          const yyyy = today.getFullYear();
-          const mm = String(today.getMonth() + 1).padStart(2, "0");
-          const dd = String(today.getDate()).padStart(2, "0");
-          reportDateInput.value = `${yyyy}-${mm}-${dd}`;
-        }
-      }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        // Populate unchanged dropdowns
-        populateSelect("country", countries);
-        populateSelect("role", roles);
-        populateSelect("stemSize", stemSizes);
-        populateSelect("cupSize", cupSizes);
-        populateSelect("headSize", headSizes);
-
-        setTodayReportDate();
-
-        // Language switching
-        const langButtons = document.querySelectorAll(".lang-button");
-        langButtons.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            langButtons.forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-            currentLang = btn.getAttribute("data-lang") || "en";
-            applyTranslations();
-          });
-        });
-
-        // Initial language apply
-        applyTranslations();
-
-        // Handle submission via hidden iframe (no navigation away)
-        const form = document.getElementById("complaintForm");
-        const iframe = document.getElementById("hidden_iframe");
-        const messageEl = document.getElementById("formMessage");
-        let submitted = false;
-
-        if (form && iframe) {
-          form.addEventListener("submit", () => {
-            // Wrap phone number in parentheses before sending
-            const phoneInput = document.getElementById("phone");
-            if (phoneInput) {
-              const raw = phoneInput.value.trim();
-              if (raw && !(raw.startsWith("(") && raw.endsWith(")"))) {
-                phoneInput.value = `(${raw})`;
-              }
-            }
-
-            submitted = true;
-            const dict = translations[currentLang] || translations.en;
-            if (messageEl) {
-              messageEl.textContent = dict.submitting_message;
-            }
-          });
-
-          iframe.addEventListener("load", () => {
-            if (!submitted) return;
-            submitted = false;
-            const dict = translations[currentLang] || translations.en;
-            if (messageEl) {
-              messageEl.textContent = dict.success_message;
-            }
-            if (form) {
-              form.reset();
-              setTodayReportDate();
-            }
-          });
-        }
-      });
-    })();
-  </script>
+  form.addEventListener('submit', function () {
+    submitBtn.disabled = true;
+    setStatus('Submitting report...', '');
+  });
+</script>
 </body>
 </html>
