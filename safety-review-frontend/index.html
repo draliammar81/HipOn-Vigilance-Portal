@@ -522,14 +522,11 @@
 </div>
 
 <script>
-  // >>>>>>>> CONFIG: replace with your Apps Script Web App URL
+  // >>>>>>>> CONFIG: your Apps Script Web App URL
   const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbz58IugfpxNcA6F5X5tWSUObkKYt6P02J773661RzDYlAV0aEKwzOfFPBlzpGRGeySy9w/exec';
-';
   // <<<<<<<<
 
   let allCases = [];
-
-  // --- utilities ---
 
   function parseTimestamp(str) {
     if (!str) return 0;
@@ -544,7 +541,6 @@
 
   function deviceImage(device) {
     const d = (device || '').toLowerCase();
-    // images are in the same folder as index.html
     if (d.includes('ceramo')) return './devices ceramo.png';
     if (d.includes('polymo')) return './devices polymo.png';
     return './devices ceramo.png';
@@ -554,17 +550,16 @@
     return c['Status'] || 'New';
   }
 
-  // --- API ---
-
   async function fetchCases() {
     const url = API_BASE_URL + '?mode=list';
     const res = await fetch(url);
-    if (!res.ok) throw new Error('API error ' + res.status);
     const data = await res.json();
+    if (data.error) {
+      throw new Error(data.error);
+    }
+    console.log('Loaded cases:', (data.cases || []).length);
     return data.cases || [];
   }
-
-  // --- rendering ---
 
   function renderDashboard() {
     const container = document.getElementById('latest-cards');
@@ -779,7 +774,63 @@
     summaryDiv.appendChild(ul);
   }
 
-  // --- nav handling ---
-
   function showView(view) {
-    const views = ['dashboard']()
+    const views = ['dashboard', 'cases', 'ai', 'trends'];
+    views.forEach(v => {
+      const section = document.getElementById('view-' + v);
+      if (section) section.classList.toggle('hidden', v !== view);
+    });
+    document.querySelectorAll('.nav-tab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.view === view);
+    });
+
+    if (view === 'cases') {
+      renderCasesTable();
+    } else if (view === 'ai') {
+      renderAIPrompt();
+    } else if (view === 'trends') {
+      populateTrendFilters();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    document.querySelectorAll('.nav-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        showView(btn.dataset.view);
+      });
+    });
+
+    document.getElementById('filter-status').addEventListener('change', renderCasesTable);
+    document.getElementById('filter-device').addEventListener('change', renderCasesTable);
+    document.getElementById('filter-search').addEventListener('input', renderCasesTable);
+
+    document.getElementById('trend-analyze').addEventListener('click', analyzeTrends);
+
+    document.getElementById('copy-prompt').addEventListener('click', async () => {
+      const text = document.getElementById('julius-prompt').value;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('Prompt copied to clipboard. Paste it into Julius AI.');
+      } catch (err) {
+        console.error('Copy failed', err);
+        alert('Unable to copy automatically. You can select and copy the text manually.');
+      }
+    });
+
+    const loading = document.getElementById('loading');
+    try {
+      allCases = await fetchCases();
+      loading.style.display = 'none';
+
+      renderDashboard();
+      renderCasesTable();
+      renderAIPrompt();
+      populateTrendFilters();
+    } catch (err) {
+      console.error(err);
+      loading.textContent = 'Error loading complaints: ' + err.message;
+    }
+  });
+</script>
+</body>
+</html>
