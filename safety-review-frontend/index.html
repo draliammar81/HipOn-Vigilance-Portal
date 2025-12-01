@@ -313,7 +313,6 @@
       background: rgba(248, 250, 252, 0.9);
     }
 
-    /* Editable cells in table */
     .case-owner-input,
     .case-remarks-input,
     .case-status-select {
@@ -399,7 +398,6 @@
       margin-bottom: 6px;
     }
 
-    /* AI selection UI */
     .ai-selectors {
       margin-bottom: 10px;
     }
@@ -598,8 +596,6 @@
 
   let allCases = [];
 
-  // --- utilities ---
-
   function parseTimestamp(str) {
     if (!str) return 0;
     const parts = String(str).split(' ');
@@ -629,6 +625,31 @@
     return c['Status'] || 'New';
   }
 
+  // NEW: assign Case IDs in frontend for any rows with missing Case ID
+  function assignCaseIdsFrontend() {
+    // 1. find max existing HIPON-XXXX number
+    let maxNum = 0;
+    allCases.forEach(c => {
+      const raw = c['Case ID'];
+      if (!raw) return;
+      const m = String(raw).match(/HIPON-(\d+)/i);
+      if (!m) return;
+      const n = parseInt(m[1], 10);
+      if (!isNaN(n) && n > maxNum) maxNum = n;
+    });
+
+    // 2. fill blanks in sheet order (_row ascending)
+    const sortedByRow = [...allCases].sort((a, b) => (a._row || 0) - (b._row || 0));
+    sortedByRow.forEach(c => {
+      const current = c['Case ID'];
+      if (!current || String(current).trim() === '') {
+        maxNum += 1;
+        const newId = 'HIPON-' + String(maxNum).padStart(4, '0');
+        c['Case ID'] = newId;
+      }
+    });
+  }
+
   async function fetchCases() {
     const url = API_BASE_URL + '?mode=list';
     const res = await fetch(url);
@@ -636,11 +657,8 @@
     if (data.error) {
       throw new Error(data.error);
     }
-    console.log('Loaded cases:', (data.cases || []).length);
     return data.cases || [];
   }
-
-  // --- dashboard ---
 
   function renderDashboard() {
     const container = document.getElementById('latest-cards');
@@ -698,8 +716,6 @@
       container.appendChild(card);
     }
   }
-
-  // --- cases table (with editing) ---
 
   function renderCasesTable() {
     const tbody = document.querySelector('#cases-table tbody');
@@ -828,9 +844,9 @@
     button.textContent = 'Saving…';
 
     try {
-      // IMPORTANT CHANGE: no explicit Content-Type header to avoid CORS preflight
       const res = await fetch(API_BASE_URL, {
         method: 'POST',
+        // no Content-Type header → avoid CORS preflight
         body: JSON.stringify(payload)
       });
       const data = await res.json();
@@ -859,8 +875,6 @@
       button.disabled = false;
     }
   }
-
-  // --- AI assistant selection ---
 
   function renderAICaseList() {
     const container = document.getElementById('ai-case-list');
@@ -969,8 +983,6 @@
     textarea.value = prompt;
   }
 
-  // --- Trend analysis ---
-
   function populateTrendFilters() {
     const fields = ['Stem size', 'Offset', 'Neck length', 'Cup size', 'Head size'];
     const ids = ['trend-stem', 'trend-offset', 'trend-neck', 'trend-cup', 'trend-head'];
@@ -1049,8 +1061,6 @@
     summaryDiv.appendChild(ul);
   }
 
-  // --- nav handling ---
-
   function showView(view) {
     const views = ['dashboard', 'cases', 'ai', 'trends'];
     views.forEach(v => {
@@ -1070,8 +1080,6 @@
       populateTrendFilters();
     }
   }
-
-  // --- init ---
 
   document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('.nav-tab').forEach(btn => {
@@ -1126,6 +1134,10 @@
     const loading = document.getElementById('loading');
     try {
       allCases = await fetchCases();
+
+      // NEW: assign HIPON-XXXX IDs for any missing Case IDs
+      assignCaseIdsFrontend();
+
       loading.style.display = 'none';
 
       renderDashboard();
