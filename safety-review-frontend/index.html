@@ -1,1 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HipOn Safety Review Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --blue-dark: #0b1f3b;
+      --blue-main: #1b4f72;
+      --blue-light: #e7f2ff;
+      --blue-accent: #4fa3ff;
+      --bg: #f5f7fb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --radius-lg: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: linear-gradient(90deg, var(--blue-dark), var(--blue-main));
+      color: white;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo {
+      height: 36px;
+      width: auto;
+    }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-name {
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .brand-subtitle {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    nav {
+      display: flex;
+      gap: 8px;
+    }
+    .nav-tab {
+      border: none;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: transparent;
+      color: #e5e7eb;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .nav-tab.active {
+      background: rgba(255, 255, 255, 0.14);
+      color: white;
+    }
+    .nav-tab:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    main {
+      flex: 1;
+      padding: 20px 24px 32px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 0 8px;
+    }
+    .section-description {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .loading {
+      padding: 16px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .case-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .case-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .case-id {
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .case-device {
+      font-size: 14px;
+      color: var(--blue-main);
+    }
+    .case-card-body {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .case-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .case-device-image {
+      height: 60px;
+      width: auto;
+      object-fit: contain;
+    }
+    .case-description {
+      font-size: 13px;
+      background: var(--blue-light);
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .filters-row,
+    .filters-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .filters-grid {
+      max-width: 700px;
+    }
+    .filter {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 140px;
+    }
+    .filter label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .filter select,
+    .filter input {
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .search-filter { flex: 1; }
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    thead {
+      background: var(--blue-light);
+    }
+    .primary-button {
+      margin-top: 12px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: none;
+      background: var(--blue-main);
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .primary-button:hover {
+      background: var(--blue-accent);
+    }
+    .prompt-box textarea {
+      width: 100%;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 10px;
+      font-size: 12px;
+      background: white;
+    }
+    .trend-summary {
+      margin-top: 16px;
+      padding: 16px;
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    }
+    .trend-summary h3 {
+      margin-top: 0;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <img src="logo.png" alt="HipOn logo" class="brand-logo">
+      <div class="brand-text">
+        <div class="brand-name">HipOn Safety Review</div>
+        <div class="brand-subtitle">Complaints & Signal Dashboard</div>
+      </div>
+    </div>
+    <nav>
+      <button class="nav-tab active" data-view="dashboard">Dashboard</button>
+      <button class="nav-tab" data-view="cases">Cases</button>
+      <button class="nav-tab" data-view="ai">AI Assistant</button>
+      <button class="nav-tab" data-view="trends">Trend Analysis</button>
+    </nav>
+  </header>
+
+  <main>
+    <div id="loading" class="loading">Loading complaints…</div>
+
+    <!-- Dashboard: latest 3 entries -->
+    <section id="view-dashboard">
+      <h2 class="section-title">Latest complaints</h2>
+      <div id="latest-cards" class="card-grid"></div>
+    </section>
+
+    <!-- Full database -->
+    <section id="view-cases" class="hidden">
+      <h2 class="section-title">All complaints</h2>
+      <div class="filters-row">
+        <div class="filter">
+          <label>Status</label>
+          <select id="filter-status">
+            <option value="">All</option>
+            <option value="New">New</option>
+            <option value="Under review">Under review</option>
+            <option value="Closed – no signal">Closed – no signal</option>
+            <option value="Closed – signal">Closed – signal</option>
+          </select>
+        </div>
+        <div class="filter">
+          <label>Device system</label>
+          <select id="filter-device">
+            <option value="">All</option>
+            <option value="ceramo">Ceramo</option>
+            <option value="polymo">Polymo</option>
+          </select>
+        </div>
+        <div class="filter search-filter">
+          <label>Search</label>
+          <input id="filter-search" type="text" placeholder="Case ID, hospital, description…">
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="cases-table">
+          <thead>
+          <tr>
+            <th>Case ID</th>
+            <th>Device</th>
+            <th>Event date</th>
+            <th>Country</th>
+            <th>Hospital</th>
+            <th>Status</th>
+            <th>Case owner</th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- AI Assistant -->
+    <section id="view-ai" class="hidden">
+      <h2 class="section-title">Julius AI prompt for latest complaint</h2>
+      <p class="section-description">
+        This prompt is pre-filled with the most recent complaint. Copy/paste it into Julius AI to get a quick safety report.
+      </p>
+      <div class="prompt-box">
+        <textarea id="julius-prompt" rows="20"></textarea>
+      </div>
+      <button class="primary-button" id="copy-prompt">Copy prompt for Julius</button>
+    </section>
+
+    <!-- Trend Analysis -->
+    <section id="view-trends" class="hidden">
+      <h2 class="section-title">Trend analysis by device & features</h2>
+      <p class="section-description">
+        Filter complaints by device system and implant configuration to see how many cases match and where they are occurring.
+      </p>
+      <div class="filters-grid">
+        <div class="filter">
+          <label>Device system</label>
+          <select id="trend-device">
+            <option value="ceramo">Ceramo</option>
+            <option value="polymo">Polymo</option>
+            <option value="">All</option>
+          </select>
+        </div>
+        <div class="filter">
+          <label>Stem size</label>
+          <select id="trend-stem"></select>
+        </div>
+        <div class="filter">
+          <label>Offset</label>
+          <select id="trend-offset"></select>
+        </div>
+        <div class="filter">
+          <label>Neck length</label>
+          <select id="trend-neck"></select>
+        </div>
+        <div class="filter">
+          <label>Cup size</label>
+          <select id="trend-cup"></select>
+        </div>
+        <div class="filter">
+          <label>Head size</label>
+          <select id="trend-head"></select>
+        </div>
+      </div>
+      <button class="primary-button" id="trend-analyze">Analyze</button>
+      <div id="trend-summary" class="trend-summary hidden"></div>
+    </section>
+  </main>
+</div>
+
+<script>
+  // >>>>>>>> CONFIG: replace with your Apps Script Web App URL
+  const API_BASE_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+  // <<<<<<<<
+
+  let allCases = [];
+
+  // --- utilities ---
+
+  function parseTimestamp(str) {
+    if (!str) return 0;
+    const parts = String(str).split(' ');
+    const datePart = parts[0] || '';
+    const timePart = parts[1] || '00:00';
+    const [d, m, y] = datePart.split('/').map(Number);
+    const [hh, mm] = timePart.split(':').map(Number);
+    if (!y || !m || !d) return 0;
+    return new Date(y, m - 1, d, hh || 0, mm || 0).getTime();
+  }
+
+  function deviceImage(device) {
+    const d = (device || '').toLowerCase();
+    if (d.includes('ceramo')) return 'ceramo.png';
+    if (d.includes('polymo')) return 'polymo.png';
+    return 'ceramo.png';
+  }
+
+  function statusOrDefault(c) {
+    return c['Status'] || 'New';
+  }
+
+  // --- API ---
+
+  async function fetchCases() {
+    const url = API_BASE_URL + '?mode=list';
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+    return data.cases || [];
+  }
+
+  // --- rendering ---
+
+  function renderDashboard() {
+    const container = document.getElementById('latest-cards');
+    container.innerHTML = '';
+
+    const sorted = [...allCases].sort((a, b) => parseTimestamp(b['Timestamp']) - parseTimestamp(a['Timestamp']));
+    const latest = sorted.slice(0, 3);
+
+    if (latest.length === 0) {
+      container.innerHTML = '<p>No complaints yet.</p>';
+      return;
+    }
+
+    for (const c of latest) {
+      const card = document.createElement('article');
+      card.className = 'case-card';
+
+      const header = document.createElement('div');
+      header.className = 'case-card-header';
+      header.innerHTML = `
+        <div class="case-id">${c['Case ID'] || ''}</div>
+        <div class="case-device">${c['Device system'] || ''}</div>
+      `;
+
+      const body = document.createElement('div');
+      body.className = 'case-card-body';
+
+      const meta = document.createElement('div');
+      meta.className = 'case-meta';
+      meta.innerHTML = `
+        <div><strong>Event date:</strong> ${c['Event date'] || ''}</div>
+        <div><strong>Country:</strong> ${c['Country'] || ''}</div>
+        <div><strong>Hospital:</strong> ${c['Hospital/facility'] || ''}</div>
+        <div><strong>Status:</strong> ${statusOrDefault(c)}</div>
+      `;
+
+      const img = document.createElement('img');
+      img.className = 'case-device-image';
+      img.src = deviceImage(c['Device system']);
+      img.alt = c['Device system'] || '';
+
+      body.appendChild(meta);
+      body.appendChild(img);
+
+      const desc = document.createElement('div');
+      desc.className = 'case-description';
+      const fullDesc = c['Event description'] || '';
+      const shortDesc = fullDesc.length > 220 ? fullDesc.slice(0, 220) + '…' : fullDesc || 'No description';
+      desc.textContent = shortDesc;
+
+      card.appendChild(header);
+      card.appendChild(body);
+      card.appendChild(desc);
+
+      container.appendChild(card);
+    }
+  }
+
+  function renderCasesTable() {
+    const tbody = document.querySelector('#cases-table tbody');
+    tbody.innerHTML = '';
+
+    const statusFilter = document.getElementById('filter-status').value.trim().toLowerCase();
+    const deviceFilter = document.getElementById('filter-device').value.trim().toLowerCase();
+    const search = document.getElementById('filter-search').value.trim().toLowerCase();
+
+    // sort by timestamp desc
+    const sorted = [...allCases].sort((a, b) => parseTimestamp(b['Timestamp']) - parseTimestamp(a['Timestamp']));
+
+    const filtered = sorted.filter(c => {
+      const status = statusOrDefault(c).toLowerCase();
+      const device = (c['Device system'] || '').toLowerCase();
+      const text = JSON.stringify(c).toLowerCase();
+
+      if (statusFilter && status !== statusFilter) return false;
+      if (deviceFilter && !device.includes(deviceFilter)) return false;
+      if (search && !text.includes(search)) return false;
+
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 7;
+      td.style.textAlign = 'center';
+      td.textContent = 'No cases match your filters.';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+
+    for (const c of filtered) {
+      const tr = document.createElement('tr');
+      const cells = [
+        c['Case ID'] || '',
+        c['Device system'] || '',
+        c['Event date'] || '',
+        c['Country'] || '',
+        c['Hospital/facility'] || '',
+        statusOrDefault(c),
+        c['Case owner'] || 'Unassigned'
+      ];
+      for (const val of cells) {
+        const td = document.createElement('td');
+        td.textContent = val;
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+  }
+
+  function renderAIPrompt() {
+    const textarea = document.getElementById('julius-prompt');
+    const sorted = [...allCases].sort((a, b) => parseTimestamp(b['Timestamp']) - parseTimestamp(a['Timestamp']));
+    const latest = sorted[0];
+    if (!latest) {
+      textarea.value = 'No complaints available yet.';
+      return;
+    }
+    const prompt = [
+      'You are a senior safety specialist for hip replacement devices.',
+      'Create a concise medical device safety report in a regulatory-friendly style for the latest HipOn complaint below.',
+      '',
+      'Include:',
+      '- Short narrative summary of the case',
+      '- Key device and surgical details',
+      '- Potential root causes or hypotheses',
+      '- Suggested follow-up actions / information to collect',
+      '- Any immediate safety concerns or signal considerations',
+      '',
+      'Complaint record (JSON):',
+      JSON.stringify(latest, null, 2)
+    ].join('\n');
+
+    textarea.value = prompt;
+  }
+
+  function populateTrendFilters() {
+    const fields = ['Stem size', 'Offset', 'Neck length', 'Cup size', 'Head size'];
+    const ids = ['trend-stem', 'trend-offset', 'trend-neck', 'trend-cup', 'trend-head'];
+
+    fields.forEach((field, idx) => {
+      const select = document.getElementById(ids[idx]);
+      const values = new Set();
+      allCases.forEach(c => {
+        const val = c[field];
+        if (val) values.add(val);
+      });
+      const sorted = Array.from(values).sort();
+
+      select.innerHTML = '';
+      const optAny = document.createElement('option');
+      optAny.value = '';
+      optAny.textContent = 'Any';
+      select.appendChild(optAny);
+
+      sorted.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v;
+        select.appendChild(opt);
+      });
+    });
+  }
+
+  function analyzeTrends() {
+    const device = document.getElementById('trend-device').value;
+    const stem = document.getElementById('trend-stem').value;
+    const offset = document.getElementById('trend-offset').value;
+    const neck = document.getElementById('trend-neck').value;
+    const cup = document.getElementById('trend-cup').value;
+    const head = document.getElementById('trend-head').value;
+
+    const matches = allCases.filter(c => {
+      const dev = (c['Device system'] || '').toLowerCase();
+      if (device && !dev.includes(device)) return false;
+      if (stem && c['Stem size'] !== stem) return false;
+      if (offset && c['Offset'] !== offset) return false;
+      if (neck && c['Neck length'] !== neck) return false;
+      if (cup && c['Cup size'] !== cup) return false;
+      if (head && c['Head size'] !== head) return false;
+      return true;
+    });
+
+    const byCountry = {};
+    matches.forEach(c => {
+      const country = c['Country'] || 'Unknown';
+      byCountry[country] = (byCountry[country] || 0) + 1;
+    });
+
+    const summaryDiv = document.getElementById('trend-summary');
+    summaryDiv.classList.remove('hidden');
+    summaryDiv.innerHTML = '';
+
+    const h3 = document.createElement('h3');
+    h3.textContent = 'Summary';
+    const pTotal = document.createElement('p');
+    pTotal.innerHTML = 'Total matching complaints: <strong>' + matches.length + '</strong>';
+
+    const h4 = document.createElement('h4');
+    h4.textContent = 'By country';
+    const ul = document.createElement('ul');
+    Object.entries(byCountry).forEach(([country, count]) => {
+      const li = document.createElement('li');
+      li.textContent = country + ': ' + count;
+      ul.appendChild(li);
+    });
+
+    summaryDiv.appendChild(h3);
+    summaryDiv.appendChild(pTotal);
+    summaryDiv.appendChild(h4);
+    summaryDiv.appendChild(ul);
+  }
+
+  // --- nav handling ---
+
+  function showView(view) {
+    const views = ['dashboard', 'cases', 'ai', 'trends'];
+    views.forEach(v => {
+      const section = document.getElementById('view-' + v);
+      if (section) section.classList.toggle('hidden', v !== view);
+    });
+    document.querySelectorAll('.nav-tab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.view === view);
+    });
+
+    if (view === 'cases') {
+      renderCasesTable();
+    } else if (view === 'ai') {
+      renderAIPrompt();
+    } else if (view === 'trends') {
+      populateTrendFilters();
+    }
+  }
+
+  // --- init ---
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    // nav click handlers
+    document.querySelectorAll('.nav-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        showView(btn.dataset.view);
+      });
+    });
+
+    // filters
+    document.getElementById('filter-status').addEventListener('change', renderCasesTable);
+    document.getElementById('filter-device').addEventListener('change', renderCasesTable);
+    document.getElementById('filter-search').addEventListener('input', renderCasesTable);
+
+    // trend analyze
+    document.getElementById('trend-analyze').addEventListener('click', analyzeTrends);
+
+    // copy prompt
+    document.getElementById('copy-prompt').addEventListener('click', async () => {
+      const text = document.getElementById('julius-prompt').value;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('Prompt copied to clipboard. Paste it into Julius AI.');
+      } catch (err) {
+        console.error('Copy failed', err);
+        alert('Unable to copy automatically. You can select and copy the text manually.');
+      }
+    });
+
+    // load data
+    const loading = document.getElementById('loading');
+    try {
+      allCases = await fetchCases();
+      loading.style.display = 'none';
+
+      renderDashboard();
+      renderCasesTable();
+      renderAIPrompt();
+      populateTrendFilters();
+    } catch (err) {
+      console.error(err);
+      loading.textContent = 'Error loading complaints: ' + err.message;
+    }
+  });
+</script>
+</body>
+</html>
 
