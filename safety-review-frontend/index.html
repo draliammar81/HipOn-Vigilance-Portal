@@ -295,6 +295,7 @@
     th, td {
       padding: 9px 10px;
       border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      vertical-align: top;
     }
 
     thead {
@@ -310,6 +311,39 @@
 
     tr:nth-child(even) td {
       background: rgba(248, 250, 252, 0.9);
+    }
+
+    /* Editable cells in table */
+    .case-owner-input,
+    .case-remarks-input,
+    .case-status-select {
+      width: 100%;
+      font-size: 12px;
+      padding: 4px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .case-remarks-input {
+      min-width: 120px;
+    }
+
+    .case-save-button {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: none;
+      font-size: 12px;
+      cursor: pointer;
+      background: linear-gradient(120deg, var(--blue-700), var(--blue-400));
+      color: white;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.35);
+    }
+
+    .case-save-button:disabled {
+      opacity: 0.7;
+      cursor: default;
+      box-shadow: none;
     }
 
     .primary-button {
@@ -365,6 +399,33 @@
       margin-bottom: 6px;
     }
 
+    /* AI selection UI */
+    .ai-selectors {
+      margin-bottom: 10px;
+    }
+
+    .ai-case-list {
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.9);
+      margin-bottom: 8px;
+    }
+
+    .ai-case-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 12px;
+      padding: 3px 0;
+    }
+
+    .ai-case-item span {
+      color: var(--text-muted);
+    }
+
     .hidden { display: none; }
 
     @media (max-width: 720px) {
@@ -384,7 +445,6 @@
 <div class="app">
   <header>
     <div class="brand">
-      <!-- images are in the same folder as this index.html -->
       <img src="./Logo.png" alt="HipOn logo" class="brand-logo">
       <div class="brand-text">
         <div class="brand-name">HipOn Safety Review</div>
@@ -423,17 +483,16 @@
     <section id="view-cases" class="hidden">
       <h2 class="section-title">All complaints</h2>
       <p class="section-description">
-        Browse and filter the full HipOn complaints database. Use the filters to focus on specific devices, statuses, or keywords.
+        Browse and filter the full HipOn complaints database. You can assign an owner, update the workflow status, and record remarks for each case.
       </p>
       <div class="filters-row">
         <div class="filter">
           <label>Status</label>
           <select id="filter-status">
             <option value="">All</option>
-            <option value="New">New</option>
-            <option value="Under review">Under review</option>
-            <option value="Closed – no signal">Closed – no signal</option>
-            <option value="Closed – signal">Closed – signal</option>
+            <option value="Assigned">Assigned</option>
+            <option value="In progress">In progress</option>
+            <option value="Closed">Closed</option>
           </select>
         </div>
         <div class="filter">
@@ -460,6 +519,8 @@
             <th>Hospital</th>
             <th>Status</th>
             <th>Case owner</th>
+            <th>Remarks</th>
+            <th>Actions</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -469,12 +530,21 @@
 
     <!-- AI Assistant -->
     <section id="view-ai" class="hidden">
-      <h2 class="section-title">Julius AI prompt for latest complaint</h2>
+      <h2 class="section-title">Julius AI assistant</h2>
       <p class="section-description">
-        This prompt is pre-filled with the most recent complaint. Copy/paste it into Julius AI to generate a structured safety report.
+        Select one or more complaints to generate a ready-to-paste prompt for Julius AI. You can also select all complaints for a broader safety signal overview.
       </p>
+
+      <div class="ai-selectors">
+        <label style="font-size: 13px; color: var(--text-muted); display:block; margin-bottom:4px;">
+          <input type="checkbox" id="ai-select-all" /> Select all complaints
+        </label>
+        <div id="ai-case-list" class="ai-case-list"></div>
+        <button class="primary-button" id="ai-generate">Generate prompt for selection</button>
+      </div>
+
       <div class="prompt-box">
-        <textarea id="julius-prompt" rows="20"></textarea>
+        <textarea id="julius-prompt" rows="18"></textarea>
       </div>
       <button class="primary-button" id="copy-prompt">Copy prompt for Julius</button>
     </section>
@@ -571,7 +641,7 @@
     return data.cases || [];
   }
 
-  // --- rendering ---
+  // --- dashboard ---
 
   function renderDashboard() {
     const container = document.getElementById('latest-cards');
@@ -630,6 +700,8 @@
     }
   }
 
+  // --- cases table (with editing) ---
+
   function renderCasesTable() {
     const tbody = document.querySelector('#cases-table tbody');
     tbody.innerHTML = '';
@@ -655,7 +727,7 @@
     if (filtered.length === 0) {
       const tr = document.createElement('tr');
       const td = document.createElement('td');
-      td.colSpan = 7;
+      td.colSpan = 9;
       td.style.textAlign = 'center';
       td.textContent = 'No cases match your filters.';
       tr.appendChild(td);
@@ -665,49 +737,249 @@
 
     for (const c of filtered) {
       const tr = document.createElement('tr');
-      const cells = [
-        c['Case ID'] || '',
+      const caseId = c['Case ID'] || '';
+      tr.dataset.id = caseId;
+
+      // Basic info cells
+      const baseCells = [
+        caseId,
         c['Device system'] || '',
         c['Event date'] || '',
         c['Country'] || '',
-        c['Hospital/facility'] || '',
-        statusOrDefault(c),
-        c['Case owner'] || 'Unassigned'
+        c['Hospital/facility'] || ''
       ];
-      for (const val of cells) {
+      baseCells.forEach(val => {
         const td = document.createElement('td');
         td.textContent = val;
         tr.appendChild(td);
+      });
+
+      // Status select (Assigned / In progress / Closed)
+      const tdStatus = document.createElement('td');
+      const statusSelect = document.createElement('select');
+      statusSelect.className = 'case-status-select';
+
+      const statuses = ['', 'Assigned', 'In progress', 'Closed'];
+      statuses.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s || '';
+        opt.textContent = s || '--';
+        statusSelect.appendChild(opt);
+      });
+
+      const currentStatus = (c['Status'] || '').toLowerCase();
+      if (currentStatus) {
+        const match = statuses.find(s => s.toLowerCase() === currentStatus);
+        if (match) statusSelect.value = match;
+        else statusSelect.value = c['Status']; // preserve unusual statuses
       }
+
+      tdStatus.appendChild(statusSelect);
+      tr.appendChild(tdStatus);
+
+      // Case owner (free text)
+      const tdOwner = document.createElement('td');
+      const ownerInput = document.createElement('input');
+      ownerInput.type = 'text';
+      ownerInput.className = 'case-owner-input';
+      ownerInput.value = c['Case owner'] || '';
+      tdOwner.appendChild(ownerInput);
+      tr.appendChild(tdOwner);
+
+      // Remarks (free text)
+      const tdRemarks = document.createElement('td');
+      const remarksInput = document.createElement('input');
+      remarksInput.type = 'text';
+      remarksInput.className = 'case-remarks-input';
+      remarksInput.value = c['Remarks'] || '';
+      tdRemarks.appendChild(remarksInput);
+      tr.appendChild(tdRemarks);
+
+      // Actions
+      const tdActions = document.createElement('td');
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'case-save-button';
+      saveBtn.type = 'button';
+      saveBtn.textContent = 'Save';
+      tdActions.appendChild(saveBtn);
+      tr.appendChild(tdActions);
+
       tbody.appendChild(tr);
     }
   }
 
-  function renderAIPrompt() {
-    const textarea = document.getElementById('julius-prompt');
-    const sorted = [...allCases].sort((a, b) => getCaseSortKey(b) - getCaseSortKey(a));
-    const latest = sorted[0];
-    if (!latest) {
-      textarea.value = 'No complaints available yet.';
+  async function saveCaseUpdate(button) {
+    const tr = button.closest('tr');
+    if (!tr) return;
+    const caseId = tr.dataset.id;
+    if (!caseId) {
+      alert('Case ID missing for this row.');
       return;
     }
+
+    const ownerInput = tr.querySelector('.case-owner-input');
+    const statusSelect = tr.querySelector('.case-status-select');
+    const remarksInput = tr.querySelector('.case-remarks-input');
+
+    const payload = {
+      id: caseId,
+      'Case ID': caseId,
+      'Case owner': ownerInput ? ownerInput.value.trim() : '',
+      'Status': statusSelect ? statusSelect.value : '',
+      'Remarks': remarksInput ? remarksInput.value.trim() : ''
+    };
+
+    button.disabled = true;
+    const oldText = button.textContent;
+    button.textContent = 'Saving…';
+
+    try {
+      const res = await fetch(API_BASE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Update failed');
+      }
+
+      const updated = data.case;
+      const idx = allCases.findIndex(c => String(c['Case ID'] || '') === String(caseId));
+      if (idx !== -1) {
+        allCases[idx] = Object.assign({}, allCases[idx], updated);
+      }
+
+      // Re-render dashboard and AI prompt because statuses/remarks changed
+      renderDashboard();
+      renderAIPrompt();
+
+      button.textContent = 'Saved';
+      setTimeout(() => {
+        button.textContent = oldText;
+        button.disabled = false;
+      }, 800);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save case: ' + err.message);
+      button.textContent = oldText;
+      button.disabled = false;
+    }
+  }
+
+  // --- AI assistant selection ---
+
+  function renderAICaseList() {
+    const container = document.getElementById('ai-case-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const sorted = [...allCases].sort((a, b) => getCaseSortKey(b) - getCaseSortKey(a));
+
+    if (sorted.length === 0) {
+      container.textContent = 'No complaints available.';
+      return;
+    }
+
+    for (const c of sorted) {
+      const caseId = c['Case ID'] || '';
+      const label = document.createElement('label');
+      label.className = 'ai-case-item';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'ai-case-checkbox';
+      checkbox.value = caseId;
+
+      const desc = document.createElement('span');
+      const parts = [
+        caseId,
+        c['Device system'] || '',
+        c['Country'] || '',
+        c['Event date'] || ''
+      ].filter(Boolean);
+      desc.textContent = parts.join(' • ');
+
+      label.appendChild(checkbox);
+      label.appendChild(desc);
+
+      container.appendChild(label);
+    }
+
+    // Default: select the most recent complaint
+    const firstCheckbox = container.querySelector('.ai-case-checkbox');
+    if (firstCheckbox) firstCheckbox.checked = true;
+
+    const selectAll = document.getElementById('ai-select-all');
+    if (selectAll) selectAll.checked = false;
+  }
+
+  function getSelectedCases() {
+    const boxes = document.querySelectorAll('.ai-case-checkbox:checked');
+    const ids = Array.from(boxes).map(b => b.value);
+    if (ids.length === 0) return [];
+
+    return allCases.filter(c => ids.includes(String(c['Case ID'] || '')));
+  }
+
+  function renderAIPrompt() {
+    const textarea = document.getElementById('julius-prompt');
+    if (!textarea) return;
+
+    const selected = getSelectedCases();
+    let casesToUse = selected;
+
+    if (casesToUse.length === 0) {
+      const sorted = [...allCases].sort((a, b) => getCaseSortKey(b) - getCaseSortKey(a));
+      if (sorted.length === 0) {
+        textarea.value = 'No complaints available yet.';
+        return;
+      }
+      casesToUse = [sorted[0]];
+    }
+
+    if (casesToUse.length === 1) {
+      const latest = casesToUse[0];
+      const prompt = [
+        'You are a senior safety specialist for hip replacement devices.',
+        'Create a concise medical device safety report in a regulatory-friendly style for the HipOn complaint below.',
+        '',
+        'Include:',
+        '- Short narrative summary of the case',
+        '- Key device and surgical details',
+        '- Potential root causes or hypotheses',
+        '- Suggested follow-up actions / information to collect',
+        '- Any immediate safety concerns or signal considerations',
+        '',
+        'Complaint record (JSON):',
+        JSON.stringify(latest, null, 2)
+      ].join('\n');
+
+      textarea.value = prompt;
+      return;
+    }
+
+    // Multiple complaints
     const prompt = [
       'You are a senior safety specialist for hip replacement devices.',
-      'Create a concise medical device safety report in a regulatory-friendly style for the latest HipOn complaint below.',
+      'Review the following ' + casesToUse.length + ' HipOn complaints and provide a concise multi-case safety analysis in a regulatory-friendly style.',
       '',
-      'Include:',
-      '- Short narrative summary of the case',
-      '- Key device and surgical details',
+      'For the overall set and per pattern of cases, include:',
+      '- Brief overview of the complaints set (case counts, countries, devices)',
+      '- Key device and surgical details that may be relevant to the signal',
+      '- Any recurring patterns (e.g., similar event types, implant configurations, timelines)',
       '- Potential root causes or hypotheses',
-      '- Suggested follow-up actions / information to collect',
-      '- Any immediate safety concerns or signal considerations',
+      '- Suggested follow-up actions / further analyses',
+      '- Any urgent safety concerns or emerging signal considerations',
       '',
-      'Complaint record (JSON):',
-      JSON.stringify(latest, null, 2)
+      'Complaints data (JSON array):',
+      JSON.stringify(casesToUse, null, 2)
     ].join('\n');
 
     textarea.value = prompt;
   }
+
+  // --- Trend analysis ---
 
   function populateTrendFilters() {
     const fields = ['Stem size', 'Offset', 'Neck length', 'Cup size', 'Head size'];
@@ -715,6 +987,7 @@
 
     fields.forEach((field, idx) => {
       const select = document.getElementById(ids[idx]);
+      if (!select) return;
       const values = new Set();
       allCases.forEach(c => {
         const val = c[field];
@@ -801,6 +1074,7 @@
     if (view === 'cases') {
       renderCasesTable();
     } else if (view === 'ai') {
+      renderAICaseList();
       renderAIPrompt();
     } else if (view === 'trends') {
       populateTrendFilters();
@@ -810,7 +1084,7 @@
   // --- init ---
 
   document.addEventListener('DOMContentLoaded', async () => {
-    // nav click handlers
+    // nav clicks
     document.querySelectorAll('.nav-tab').forEach(btn => {
       btn.addEventListener('click', () => {
         showView(btn.dataset.view);
@@ -822,10 +1096,37 @@
     document.getElementById('filter-device').addEventListener('change', renderCasesTable);
     document.getElementById('filter-search').addEventListener('input', renderCasesTable);
 
-    // trend analyze
-    document.getElementById('trend-analyze').addEventListener('click', analyzeTrends);
+    // cases table save (event delegation)
+    const casesTbody = document.querySelector('#cases-table tbody');
+    casesTbody.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.case-save-button');
+      if (!btn) return;
+      await saveCaseUpdate(btn);
+    });
 
-    // copy prompt
+    // AI: select all toggle
+    document.getElementById('ai-select-all').addEventListener('change', (e) => {
+      const checked = e.target.checked;
+      document.querySelectorAll('.ai-case-checkbox').forEach(cb => {
+        cb.checked = checked;
+      });
+      renderAIPrompt();
+    });
+
+    // AI: re-render prompt when clicking "Generate"
+    document.getElementById('ai-generate').addEventListener('click', (e) => {
+      e.preventDefault();
+      renderAIPrompt();
+    });
+
+    // AI: whenever user manually checks/unchecks a case, update prompt
+    document.getElementById('ai-case-list').addEventListener('change', (e) => {
+      if (e.target.classList.contains('ai-case-checkbox')) {
+        renderAIPrompt();
+      }
+    });
+
+    // Copy prompt
     document.getElementById('copy-prompt').addEventListener('click', async () => {
       const text = document.getElementById('julius-prompt').value;
       try {
@@ -837,6 +1138,10 @@
       }
     });
 
+    // Trend analyze
+    document.getElementById('trend-analyze').addEventListener('click', analyzeTrends);
+
+    // load data
     const loading = document.getElementById('loading');
     try {
       allCases = await fetchCases();
@@ -844,6 +1149,7 @@
 
       renderDashboard();
       renderCasesTable();
+      renderAICaseList();
       renderAIPrompt();
       populateTrendFilters();
     } catch (err) {
