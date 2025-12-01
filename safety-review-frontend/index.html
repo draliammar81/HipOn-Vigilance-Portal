@@ -528,6 +528,8 @@
 
   let allCases = [];
 
+  // --- utilities ---
+
   function parseTimestamp(str) {
     if (!str) return 0;
     const parts = String(str).split(' ');
@@ -537,6 +539,14 @@
     const [hh, mm] = timePart.split(':').map(Number);
     if (!y || !m || !d) return 0;
     return new Date(y, m - 1, d, hh || 0, mm || 0).getTime();
+  }
+
+  // Sort key: prefer Timestamp, fall back to sheet row (_row)
+  function getCaseSortKey(c) {
+    const t = parseTimestamp(c['Timestamp']);
+    if (t && !Number.isNaN(t)) return t;
+    if (c._row) return c._row;
+    return 0;
   }
 
   function deviceImage(device) {
@@ -561,11 +571,13 @@
     return data.cases || [];
   }
 
+  // --- rendering ---
+
   function renderDashboard() {
     const container = document.getElementById('latest-cards');
     container.innerHTML = '';
 
-    const sorted = [...allCases].sort((a, b) => parseTimestamp(b['Timestamp']) - parseTimestamp(a['Timestamp']));
+    const sorted = [...allCases].sort((a, b) => getCaseSortKey(b) - getCaseSortKey(a));
     const latest = sorted.slice(0, 3);
 
     if (latest.length === 0) {
@@ -626,7 +638,7 @@
     const deviceFilter = document.getElementById('filter-device').value.trim().toLowerCase();
     const search = document.getElementById('filter-search').value.trim().toLowerCase();
 
-    const sorted = [...allCases].sort((a, b) => parseTimestamp(b['Timestamp']) - parseTimestamp(a['Timestamp']));
+    const sorted = [...allCases].sort((a, b) => getCaseSortKey(b) - getCaseSortKey(a));
 
     const filtered = sorted.filter(c => {
       const status = statusOrDefault(c).toLowerCase();
@@ -673,7 +685,7 @@
 
   function renderAIPrompt() {
     const textarea = document.getElementById('julius-prompt');
-    const sorted = [...allCases].sort((a, b) => parseTimestamp(b['Timestamp']) - parseTimestamp(a['Timestamp']));
+    const sorted = [...allCases].sort((a, b) => getCaseSortKey(b) - getCaseSortKey(a));
     const latest = sorted[0];
     if (!latest) {
       textarea.value = 'No complaints available yet.';
@@ -774,6 +786,8 @@
     summaryDiv.appendChild(ul);
   }
 
+  // --- nav handling ---
+
   function showView(view) {
     const views = ['dashboard', 'cases', 'ai', 'trends'];
     views.forEach(v => {
@@ -793,19 +807,25 @@
     }
   }
 
+  // --- init ---
+
   document.addEventListener('DOMContentLoaded', async () => {
+    // nav click handlers
     document.querySelectorAll('.nav-tab').forEach(btn => {
       btn.addEventListener('click', () => {
         showView(btn.dataset.view);
       });
     });
 
+    // filters
     document.getElementById('filter-status').addEventListener('change', renderCasesTable);
     document.getElementById('filter-device').addEventListener('change', renderCasesTable);
     document.getElementById('filter-search').addEventListener('input', renderCasesTable);
 
+    // trend analyze
     document.getElementById('trend-analyze').addEventListener('click', analyzeTrends);
 
+    // copy prompt
     document.getElementById('copy-prompt').addEventListener('click', async () => {
       const text = document.getElementById('julius-prompt').value;
       try {
