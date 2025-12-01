@@ -6,148 +6,235 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      --blue-dark: #0b1f3b;
-      --blue-main: #1b4f72;
-      --blue-light: #e7f2ff;
-      --blue-accent: #4fa3ff;
-      --bg: #f5f7fb;
+      --blue-900: #06142f;
+      --blue-800: #0b1f3b;
+      --blue-700: #10335a;
+      --blue-600: #1b4f72;
+      --blue-400: #4fa3ff;
+      --blue-100: #e7f2ff;
+      --bg: #f3f6fb;
       --text-main: #111827;
       --text-muted: #6b7280;
       --border: #e5e7eb;
-      --radius-lg: 16px;
+      --radius-lg: 18px;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
+      background: radial-gradient(circle at top, #e3f0ff 0, #f3f6fb 50%, #eef2f7 100%);
       color: var(--text-main);
     }
+
     .app {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
+
     header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 12px 24px;
-      background: linear-gradient(90deg, var(--blue-dark), var(--blue-main));
+      background: linear-gradient(120deg, var(--blue-900), var(--blue-700));
       color: white;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+      box-shadow: 0 6px 18px rgba(6, 20, 47, 0.55);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
+
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
+
     .brand-logo {
-      height: 36px;
+      height: 40px;
       width: auto;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 4px;
     }
+
     .brand-text {
       display: flex;
       flex-direction: column;
     }
+
     .brand-name {
       font-weight: 600;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
+      font-size: 16px;
     }
+
     .brand-subtitle {
       font-size: 12px;
-      opacity: 0.8;
+      opacity: 0.85;
     }
+
     nav {
       display: flex;
       gap: 8px;
+      background: rgba(6, 20, 47, 0.5);
+      border-radius: 999px;
+      padding: 4px;
     }
+
     .nav-tab {
       border: none;
-      padding: 8px 14px;
+      padding: 7px 14px;
       border-radius: 999px;
       background: transparent;
-      color: #e5e7eb;
+      color: #cbd5f5;
       cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, color 0.15s, transform 0.1s;
+    }
+
+    .nav-tab span.icon {
       font-size: 14px;
     }
+
     .nav-tab.active {
-      background: rgba(255, 255, 255, 0.14);
-      color: white;
+      background: white;
+      color: var(--blue-800);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.3);
+      transform: translateY(-1px);
     }
+
     .nav-tab:hover {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.12);
     }
+
     main {
       flex: 1;
-      padding: 20px 24px 32px;
+      padding: 22px 24px 32px;
       max-width: 1200px;
       width: 100%;
       margin: 0 auto;
     }
+
     .section-title {
       font-size: 20px;
       font-weight: 600;
-      margin: 0 0 8px;
+      margin: 0 0 6px;
+      color: var(--blue-900);
     }
+
     .section-description {
       font-size: 14px;
       color: var(--text-muted);
       margin-bottom: 16px;
     }
+
     .loading {
-      padding: 16px;
+      padding: 18px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      backdrop-filter: blur(8px);
+      font-size: 13px;
     }
+
+    .loading::before {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(15, 23, 42, 0.12);
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     .card-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
+      gap: 18px;
+      margin-top: 4px;
     }
+
     .case-card {
-      background: white;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(231, 242, 255, 0.96));
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(148, 163, 184, 0.4);
       padding: 16px;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
       display: flex;
       flex-direction: column;
       gap: 10px;
+      backdrop-filter: blur(6px);
     }
+
     .case-card-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
       gap: 8px;
     }
+
     .case-id {
       font-weight: 600;
       font-size: 15px;
+      color: var(--blue-900);
     }
+
     .case-device {
-      font-size: 14px;
-      color: var(--blue-main);
+      font-size: 13px;
+      color: var(--blue-600);
+      background: rgba(79, 163, 255, 0.12);
+      padding: 3px 8px;
+      border-radius: 999px;
     }
+
     .case-card-body {
       display: flex;
       justify-content: space-between;
       gap: 12px;
+      align-items: center;
     }
+
     .case-meta {
       font-size: 13px;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.45;
     }
+
+    .case-meta strong {
+      color: var(--blue-800);
+    }
+
     .case-device-image {
-      height: 60px;
+      height: 64px;
       width: auto;
       object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.25));
     }
+
     .case-description {
       font-size: 13px;
-      background: var(--blue-light);
-      padding: 10px;
+      background: rgba(15, 23, 42, 0.04);
+      padding: 10px 11px;
       border-radius: 10px;
+      color: #1f2933;
     }
+
     .filters-row,
     .filters-grid {
       display: flex;
@@ -155,94 +242,168 @@
       gap: 12px;
       margin-bottom: 16px;
     }
+
     .filters-grid {
       max-width: 700px;
     }
+
     .filter {
       display: flex;
       flex-direction: column;
       gap: 4px;
       min-width: 140px;
     }
+
     .filter label {
       font-size: 12px;
       color: var(--text-muted);
     }
+
     .filter select,
     .filter input {
       padding: 6px 8px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid var(--border);
       font-size: 14px;
+      background: rgba(255, 255, 255, 0.9);
+      outline: none;
     }
+
+    .filter select:focus,
+    .filter input:focus {
+      border-color: var(--blue-400);
+      box-shadow: 0 0 0 1px rgba(79, 163, 255, 0.35);
+    }
+
     .search-filter { flex: 1; }
+
     .table-wrapper {
       overflow-x: auto;
       margin-top: 8px;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+      border: 1px solid rgba(148, 163, 184, 0.5);
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
     }
+
     th, td {
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--border);
+      padding: 9px 10px;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
     }
+
     thead {
-      background: var(--blue-light);
+      background: linear-gradient(90deg, #d8e7ff, #edf3ff);
     }
+
+    th {
+      text-align: left;
+      font-weight: 500;
+      font-size: 12px;
+      color: #1f2933;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(248, 250, 252, 0.9);
+    }
+
     .primary-button {
       margin-top: 12px;
       padding: 8px 16px;
       border-radius: 999px;
       border: none;
-      background: var(--blue-main);
+      background: linear-gradient(120deg, var(--blue-700), var(--blue-400));
       color: white;
       font-size: 14px;
       cursor: pointer;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.35);
+      transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
     }
+
     .primary-button:hover {
-      background: var(--blue-accent);
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.45);
     }
+
+    .primary-button:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
+    }
+
     .prompt-box textarea {
       width: 100%;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      padding: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 10px 11px;
       font-size: 12px;
-      background: white;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.16);
     }
+
     .trend-summary {
       margin-top: 16px;
-      padding: 16px;
+      padding: 16px 18px;
       background: white;
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
     }
+
     .trend-summary h3 {
       margin-top: 0;
+      margin-bottom: 4px;
     }
+
+    .trend-summary h4 {
+      margin-bottom: 6px;
+    }
+
     .hidden { display: none; }
+
+    @media (max-width: 720px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      nav {
+        align-self: stretch;
+        justify-content: space-between;
+      }
+    }
   </style>
 </head>
 <body>
 <div class="app">
   <header>
     <div class="brand">
-      <img src="logo.png" alt="HipOn logo" class="brand-logo">
+      <!-- images are in the same folder as this index.html -->
+      <img src="./Logo.png" alt="HipOn logo" class="brand-logo">
       <div class="brand-text">
         <div class="brand-name">HipOn Safety Review</div>
-        <div class="brand-subtitle">Complaints & Signal Dashboard</div>
+        <div class="brand-subtitle">Complaints &amp; Signal Dashboard</div>
       </div>
     </div>
     <nav>
-      <button class="nav-tab active" data-view="dashboard">Dashboard</button>
-      <button class="nav-tab" data-view="cases">Cases</button>
-      <button class="nav-tab" data-view="ai">AI Assistant</button>
-      <button class="nav-tab" data-view="trends">Trend Analysis</button>
+      <button class="nav-tab active" data-view="dashboard">
+        <span class="icon">📊</span> Dashboard
+      </button>
+      <button class="nav-tab" data-view="cases">
+        <span class="icon">📁</span> Cases
+      </button>
+      <button class="nav-tab" data-view="ai">
+        <span class="icon">🤖</span> AI Assistant
+      </button>
+      <button class="nav-tab" data-view="trends">
+        <span class="icon">📈</span> Trend Analysis
+      </button>
     </nav>
   </header>
 
@@ -252,12 +413,18 @@
     <!-- Dashboard: latest 3 entries -->
     <section id="view-dashboard">
       <h2 class="section-title">Latest complaints</h2>
+      <p class="section-description">
+        The three most recent complaints recorded in the database, with key case details and device pictures.
+      </p>
       <div id="latest-cards" class="card-grid"></div>
     </section>
 
     <!-- Full database -->
     <section id="view-cases" class="hidden">
       <h2 class="section-title">All complaints</h2>
+      <p class="section-description">
+        Browse and filter the full HipOn complaints database. Use the filters to focus on specific devices, statuses, or keywords.
+      </p>
       <div class="filters-row">
         <div class="filter">
           <label>Status</label>
@@ -304,7 +471,7 @@
     <section id="view-ai" class="hidden">
       <h2 class="section-title">Julius AI prompt for latest complaint</h2>
       <p class="section-description">
-        This prompt is pre-filled with the most recent complaint. Copy/paste it into Julius AI to get a quick safety report.
+        This prompt is pre-filled with the most recent complaint. Copy/paste it into Julius AI to generate a structured safety report.
       </p>
       <div class="prompt-box">
         <textarea id="julius-prompt" rows="20"></textarea>
@@ -314,7 +481,7 @@
 
     <!-- Trend Analysis -->
     <section id="view-trends" class="hidden">
-      <h2 class="section-title">Trend analysis by device & features</h2>
+      <h2 class="section-title">Trend analysis by device &amp; features</h2>
       <p class="section-description">
         Filter complaints by device system and implant configuration to see how many cases match and where they are occurring.
       </p>
@@ -376,9 +543,10 @@
 
   function deviceImage(device) {
     const d = (device || '').toLowerCase();
-    if (d.includes('ceramo')) return 'ceramo.png';
-    if (d.includes('polymo')) return 'polymo.png';
-    return 'ceramo.png';
+    // images are in the same folder as index.html
+    if (d.includes('ceramo')) return './devices ceramo.png';
+    if (d.includes('polymo')) return './devices polymo.png';
+    return './devices ceramo.png';
   }
 
   function statusOrDefault(c) {
@@ -462,7 +630,6 @@
     const deviceFilter = document.getElementById('filter-device').value.trim().toLowerCase();
     const search = document.getElementById('filter-search').value.trim().toLowerCase();
 
-    // sort by timestamp desc
     const sorted = [...allCases].sort((a, b) => parseTimestamp(b['Timestamp']) - parseTimestamp(a['Timestamp']));
 
     const filtered = sorted.filter(c => {
@@ -614,69 +781,4 @@
   // --- nav handling ---
 
   function showView(view) {
-    const views = ['dashboard', 'cases', 'ai', 'trends'];
-    views.forEach(v => {
-      const section = document.getElementById('view-' + v);
-      if (section) section.classList.toggle('hidden', v !== view);
-    });
-    document.querySelectorAll('.nav-tab').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.view === view);
-    });
-
-    if (view === 'cases') {
-      renderCasesTable();
-    } else if (view === 'ai') {
-      renderAIPrompt();
-    } else if (view === 'trends') {
-      populateTrendFilters();
-    }
-  }
-
-  // --- init ---
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    // nav click handlers
-    document.querySelectorAll('.nav-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        showView(btn.dataset.view);
-      });
-    });
-
-    // filters
-    document.getElementById('filter-status').addEventListener('change', renderCasesTable);
-    document.getElementById('filter-device').addEventListener('change', renderCasesTable);
-    document.getElementById('filter-search').addEventListener('input', renderCasesTable);
-
-    // trend analyze
-    document.getElementById('trend-analyze').addEventListener('click', analyzeTrends);
-
-    // copy prompt
-    document.getElementById('copy-prompt').addEventListener('click', async () => {
-      const text = document.getElementById('julius-prompt').value;
-      try {
-        await navigator.clipboard.writeText(text);
-        alert('Prompt copied to clipboard. Paste it into Julius AI.');
-      } catch (err) {
-        console.error('Copy failed', err);
-        alert('Unable to copy automatically. You can select and copy the text manually.');
-      }
-    });
-
-    // load data
-    const loading = document.getElementById('loading');
-    try {
-      allCases = await fetchCases();
-      loading.style.display = 'none';
-
-      renderDashboard();
-      renderCasesTable();
-      renderAIPrompt();
-      populateTrendFilters();
-    } catch (err) {
-      console.error(err);
-      loading.textContent = 'Error loading complaints: ' + err.message;
-    }
-  });
-</script>
-</body>
-</html>
+    const views = ['dashboard']()
